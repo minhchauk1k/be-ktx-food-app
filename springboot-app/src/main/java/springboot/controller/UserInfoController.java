@@ -13,46 +13,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import springboot.model.UserInfo;
 import springboot.service.UserInfoService;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserInfoController {
-
 	private final UserInfoService userInfoService;
-	
-	public UserInfoController(UserInfoService userInfoService) {
-		this.userInfoService = userInfoService;
-	}
-	
+		
 	@GetMapping
 	public ResponseEntity<List<UserInfo>> getAllUser() {
-		List<UserInfo> usersList = userInfoService.getAllUserInfo();
+		List<UserInfo> usersList = userInfoService.getAllUsers();
 		return new ResponseEntity<>(usersList, HttpStatus.OK);
 	}
 	
 	@GetMapping("/find/{id}")
-	public ResponseEntity<UserInfo> getUserById(@PathVariable("id") Long id) {
-		UserInfo user = userInfoService.findUserInfoById(id);
+	public ResponseEntity<UserInfo> getUserById(@PathVariable("id") int id) {
+		UserInfo user = userInfoService.findUserById(id);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 	
 	@PostMapping("/add")
 	public ResponseEntity<UserInfo> addUser(@RequestBody UserInfo userInfo) {
-		UserInfo user = userInfoService.addUserInfo(userInfo);
+		UserInfo user = userInfoService.addUser(userInfo);
 		return new ResponseEntity<>(user, HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/update")
 	public ResponseEntity<UserInfo> updateUser(@RequestBody UserInfo userInfo) {
-		UserInfo user = userInfoService.updateUserInfo(userInfo);
+		UserInfo user = userInfoService.updateUser(userInfo);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
-		userInfoService.deleteUserInfoById(id);
+	public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
+		userInfoService.deleteUserById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
