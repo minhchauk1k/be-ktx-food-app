@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import springboot.common.ConstDefined;
 import springboot.model.Role;
 import springboot.model.UserInfo;
 import springboot.service.RoleService;
@@ -24,29 +25,40 @@ public class SpringbootApplication {
 	public BCryptPasswordEncoder getEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
-//	@Bean
-	CommandLineRunner run(UserInfoService userService, RoleService roleService) {
+
+	/**
+	 * Đoạn code tao data mặc định cho DB
+	 */
+	@Bean
+	CommandLineRunner createDefaultDB(RoleService roleService, UserInfoService userService) {
 		return args -> {
-			
-			if (userService.findUserById(2) != null) {
-				userService.deleteUserById(2);
+			// tạo Role table
+			if (roleService.getAllRoles().size() == 0) {
+				Role newRole = new Role();
+				newRole.setName(ConstDefined.ROLE_ADMIN);
+				roleService.addRole(newRole);
+				newRole = new Role();
+				newRole.setName(ConstDefined.ROLE_MANAGER);
+				roleService.addRole(newRole);
+				newRole = new Role();
+				newRole.setName(ConstDefined.ROLE_OWNER);
+				roleService.addRole(newRole);
+				newRole = new Role();
+				newRole.setName(ConstDefined.ROLE_STAFF);
+				roleService.addRole(newRole);
+				newRole = new Role();
+				newRole.setName(ConstDefined.ROLE_USER);
+				roleService.addRole(newRole);
 			}
 			
-			
-			if (userService.findUserByName("admin") == null) {
-				UserInfo user = new UserInfo();
+			// tạo user mặc định ADMIN
+			UserInfo user = userService.findUserByName("admin");
+			if (user == null) {
+				user = new UserInfo();
 				user.setUserName("admin");
 				user.setPassword("admin123");
 				user.setCreateDate(new Date());
 				userService.addUser(user);
-			}
-
-			if (roleService.getAllRoles().size() == 0) {
-				Role role = new Role();
-				role.setName("ADMIN");
-				roleService.addRole(role);
-				userService.addRoleToUser("admin", role.getName());
 			}
 		};
 	}

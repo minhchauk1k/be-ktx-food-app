@@ -10,22 +10,24 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Role;
 import springboot.model.UserInfo;
-import springboot.repository.RoleRepository;
 import springboot.repository.UserInfoRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional @Slf4j
 public class UserInfoService implements UserDetailsService {
 	private final UserInfoRepository userRepo;
-	private final RoleRepository roleRepo;
+	private final RoleService roleService;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -40,13 +42,15 @@ public class UserInfoService implements UserDetailsService {
 		return new User(user.getUserName(), user.getPassword(), authorities);
 	}
 
-	public UserInfo addUser(UserInfo userInfo) {
-		userInfo.setCreateDate(new Date());
-		return userRepo.save(userInfo);
+	public UserInfo addUser(UserInfo user) {
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setCreateDate(new Date());
+		log.info("Created user: {}", user.getUserName());
+		return userRepo.save(user);
 	}
 
-	public UserInfo updateUser(UserInfo userInfo) {
-		return userRepo.save(userInfo);
+	public UserInfo updateUser(UserInfo user) {
+		return userRepo.save(user);
 	}
 
 	public List<UserInfo> getAllUsers() {
@@ -82,7 +86,7 @@ public class UserInfoService implements UserDetailsService {
 
 	public void addRoleToUser(String userName, String roleName) {
 		UserInfo user = findUserByName(userName);
-		Role role = roleRepo.findByName(roleName);
+		Role role = roleService.findRoleByName(roleName);
 		user.getRoles().add(role);
 	}
 

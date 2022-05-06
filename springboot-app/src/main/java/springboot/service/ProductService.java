@@ -3,21 +3,19 @@ package springboot.service;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Product;
 import springboot.repository.ProductRepository;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class ProductService {
 	private final ProductRepository productRepo;
-
-	@Autowired
-	public ProductService(ProductRepository productRepo) {
-		this.productRepo = productRepo;
-	}
 
 	public Product addProduct(Product product) {
 		if (product.getProductCode().isEmpty()) {
