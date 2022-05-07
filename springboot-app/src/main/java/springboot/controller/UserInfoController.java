@@ -46,33 +46,33 @@ public class UserInfoController {
 	private static final String BEARER = "Bearer ";
 	private static final int hour = 60 * 60;
 
-	@GetMapping
-	public ResponseEntity<List<UserInfo>> getAllUser() {
-		List<UserInfo> usersList = userService.getAllUsers();
-		return new ResponseEntity<>(usersList, HttpStatus.OK);
+	@GetMapping("/all")
+	public ResponseEntity<List<UserInfo>> getUsers() {
+		List<UserInfo> users = userService.getUsers();
+		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
 
 	@GetMapping("/find/{id}")
-	public ResponseEntity<UserInfo> getUserById(@PathVariable("id") int id) {
-		UserInfo user = userService.findUserById(id);
+	public ResponseEntity<UserInfo> getById(@PathVariable("id") int id) {
+		UserInfo user = userService.findById(id);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<UserInfo> addUser(@RequestBody UserInfo userInfo) {
-		UserInfo user = userService.addUser(userInfo);
-		return new ResponseEntity<>(user, HttpStatus.CREATED);
+	public ResponseEntity<UserInfo> addUser(@RequestBody UserInfo user) {
+		UserInfo newUser = userService.addUser(user);
+		return new ResponseEntity<>(newUser, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<UserInfo> updateUser(@RequestBody UserInfo userInfo) {
-		UserInfo user = userService.updateUser(userInfo);
-		return new ResponseEntity<>(user, HttpStatus.OK);
+	public ResponseEntity<UserInfo> updateUser(@RequestBody UserInfo user) {
+		UserInfo updatedUser = userService.updateUser(user);
+		return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
-		userService.deleteUserById(id);
+		userService.softDeleteById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -87,8 +87,8 @@ public class UserInfoController {
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refreshToken);
 				String username = decodedJWT.getSubject();
-				UserInfo user = userService.findUserByName(username);
-				String accessToken = JWT.create().withSubject(user.getUserName())
+				UserInfo user = userService.findByUsername(username);
+				String accessToken = JWT.create().withSubject(user.getUsername())
 						.withExpiresAt(new Date(System.currentTimeMillis() + hour * 100))
 						.withIssuer(request.getRequestURL().toString()).withClaim("roles", getRoleList(user))
 						.sign(algorithm);

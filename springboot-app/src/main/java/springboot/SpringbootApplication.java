@@ -52,10 +52,10 @@ public class SpringbootApplication {
 			}
 			
 			// tạo user mặc định ADMIN
-			UserInfo user = userService.findUserByName("admin");
+			UserInfo user = userService.findByUsername("admin");
 			if (user == null) {
 				user = new UserInfo();
-				user.setUserName("admin");
+				user.setUsername("admin");
 				user.setPassword("admin123");
 				user.setCreateDate(new Date());
 				userService.addUser(user);

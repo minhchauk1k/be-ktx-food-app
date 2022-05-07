@@ -1,11 +1,12 @@
 package springboot.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,71 +24,96 @@ import springboot.repository.UserInfoRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional @Slf4j
+@Transactional
+@Slf4j
 public class UserInfoService implements UserDetailsService {
 	private final UserInfoRepository userRepo;
 	private final RoleService roleService;
-	private final PasswordEncoder passwordEncoder;
+	private final PasswordEncoder pwEncoder;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserInfo user = findUserByName(username);
+		UserInfo user = findByUsername(username);
 		if (user == null) {
-			throw new UsernameNotFoundException("User is not exist in DB!");
+			throw new UsernameNotFoundException("Username: " + username + " is not exist in DB!");
 		}
-		Collection<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		user.getRoles().forEach(role -> {
 			authorities.add(new SimpleGrantedAuthority(role.getName()));
 		});
-		return new User(user.getUserName(), user.getPassword(), authorities);
+		return new User(user.getUsername(), user.getPassword(), authorities);
 	}
 
 	public UserInfo addUser(UserInfo user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setPassword(pwEncoder.encode(user.getPassword()));
 		user.setCreateDate(new Date());
-		log.info("Created user: {}", user.getUserName());
+		user.setCreateUser(getCurrentUser());
+		log.info("Created user: {}", user.getUsername());
 		return userRepo.save(user);
 	}
 
 	public UserInfo updateUser(UserInfo user) {
+		user.setUpdateDate(new Date());
+		user.setUpdateUser(getCurrentUser());
+		log.info("Updated user: {} by {}", new Object[] { user.getUsername(), getCurrentUser() });
 		return userRepo.save(user);
 	}
 
-	public List<UserInfo> getAllUsers() {
+	public List<UserInfo> getUsers() {
 		return userRepo.findAll();
 	}
-
-	public void deleteUserById(int id) {
-//		UserInfo entity = this.findUserById(id);
-//		entity.setIsDeleted(true);
-//		userRepo.save(entity);
-		userRepo.deleteById(id);
+	
+	public void softDeleteById(int id) {
+		UserInfo user = findById(id);
+		if (user != null) {
+			user.setDeleted(true);
+			userRepo.save(user);
+		} else {
+			throw new EntityNotFoundException("User with id: " + id + " was not found!");
+		}
 	}
 
-	public UserInfo findUserById(int i) {
+	public void deleteById(int id) {
+		UserInfo user = findById(id);
+		if (user != null) {
+			userRepo.deleteById(id);
+		} else {
+			throw new EntityNotFoundException("User with id: " + id + " was not found!");
+		}
+	}
+
+	public UserInfo findById(int id) {
 		try {
-			return userRepo.findById(i)
-					.orElseThrow(() -> new EntityNotFoundException("User by id " + i + " was not found!"));
+			return userRepo.findById(id)
+					.orElseThrow(() -> new EntityNotFoundException("User with id: " + id + " was not found!"));
 		} catch (EntityNotFoundException e) {
 			return null;
 		}
 
 	}
 
-	public UserInfo findUserByName(String name) {
+	public UserInfo findByUsername(String name) {
 		try {
-			return userRepo.findByUserName(name)
-					.orElseThrow(() -> new EntityNotFoundException("User by name " + name + " was not found!"));
+			return userRepo.findByUsername(name)
+					.orElseThrow(() -> new EntityNotFoundException("User with username: " + name + " was not found!"));
 		} catch (EntityNotFoundException e) {
 			return null;
 		}
-
 	}
 
-	public void addRoleToUser(String userName, String roleName) {
-		UserInfo user = findUserByName(userName);
-		Role role = roleService.findRoleByName(roleName);
-		user.getRoles().add(role);
+	public void addRoleToUser(String username, String rolename) {
+		UserInfo user = findByUsername(username);
+		Role role = roleService.findRoleByName(rolename);
+		if (user != null && role != null) {
+			user.getRoles().add(role);
+		} else {
+			throw new EntityNotFoundException("Can't add role: " + rolename + " to user: " + username);
+		}
+	}
+
+	private String getCurrentUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return auth.getName();
 	}
 
 }

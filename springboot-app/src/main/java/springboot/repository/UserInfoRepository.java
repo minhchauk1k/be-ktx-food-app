@@ -11,7 +11,7 @@ import springboot.model.UserInfo;
 public interface UserInfoRepository extends JpaRepository<UserInfo, Integer> {
 	Optional<UserInfo> findById(int i);
 	
-	Optional<UserInfo> findByUserName(String name);
+	Optional<UserInfo> findByUsername(String name);
 
 	void deleteById(int id);
 }

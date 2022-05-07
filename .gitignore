@@ -1,2 +1,13 @@
 
 springboot-app/.metadata
+springboot-app/target/classes/springboot/model/Role.class
+springboot-app/target/classes/springboot/model/Product.class
+springboot-app/target/classes/springboot/controller/UserInfoController.class
+springboot-app/target/classes/META-INF/maven/springboot.app/springboot-app/pom.properties
+springboot-app/target/classes/springboot/model/Product.class
+springboot-app/target/classes/springboot/model/Role.class
+springboot-app/target/classes/springboot/model/UserInfo.class
+springboot-app/target/classes/springboot/repository/UserInfoRepository.class
+springboot-app/target/classes/springboot/service/ProductService.class
+springboot-app/target/classes/springboot/service/UserInfoService.class
+springboot-app/target/classes/springboot/SpringbootApplication.class

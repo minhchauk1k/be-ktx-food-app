@@ -48,7 +48,7 @@ public class ProductService {
 		Product entity = this.findProductById(id);
 		entity.setUpdateDate(new Date());
 		entity.setUpdateUser("admin");
-		entity.setIsDeleted(true);
+		entity.setDeleted(true);
 		productRepo.save(entity);
 //		productRepo.deteteById(id);
 	}
