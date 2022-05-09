@@ -30,4 +30,9 @@ public class Role implements Serializable {
 	private Long id;
 	@Column(nullable = false, updatable = false)
 	private String name;
+	
+	public Role(String name) {
+		super();
+		this.name = name;
+	}
 }

@@ -113,7 +113,7 @@ public class UserInfoService implements UserDetailsService {
 
 	private String getCurrentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return auth.getName();
+		return (auth != null && auth.getName() != null) ? auth.getName() : "";
 	}
 
 }

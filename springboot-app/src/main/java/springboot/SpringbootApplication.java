@@ -10,8 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import springboot.common.ConstDefined;
 import springboot.model.Role;
+import springboot.model.SystemParameter;
 import springboot.model.UserInfo;
 import springboot.service.RoleService;
+import springboot.service.SystemParameterService;
 import springboot.service.UserInfoService;
 
 @SpringBootApplication
@@ -22,7 +24,7 @@ public class SpringbootApplication {
 	}
 
 	@Bean
-	public BCryptPasswordEncoder getEncoder() {
+	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
@@ -30,27 +32,18 @@ public class SpringbootApplication {
 	 * Đoạn code tao data mặc định cho DB
 	 */
 	@Bean
-	CommandLineRunner createDefaultDB(RoleService roleService, UserInfoService userService) {
+	CommandLineRunner createDefaultDB(RoleService roleService, UserInfoService userService,
+			SystemParameterService paramService) {
 		return args -> {
 			// tạo Role table
-			if (roleService.getAllRoles().size() == 0) {
-				Role newRole = new Role();
-				newRole.setName(ConstDefined.ROLE_ADMIN);
-				roleService.addRole(newRole);
-				newRole = new Role();
-				newRole.setName(ConstDefined.ROLE_MANAGER);
-				roleService.addRole(newRole);
-				newRole = new Role();
-				newRole.setName(ConstDefined.ROLE_OWNER);
-				roleService.addRole(newRole);
-				newRole = new Role();
-				newRole.setName(ConstDefined.ROLE_STAFF);
-				roleService.addRole(newRole);
-				newRole = new Role();
-				newRole.setName(ConstDefined.ROLE_USER);
-				roleService.addRole(newRole);
+			if (roleService.getRoles().size() == 0) {
+				roleService.addRole(new Role(ConstDefined.ROLE_ADMIN));
+				roleService.addRole(new Role(ConstDefined.ROLE_MANAGER));
+				roleService.addRole(new Role(ConstDefined.ROLE_OWNER));
+				roleService.addRole(new Role(ConstDefined.ROLE_STAFF));
+				roleService.addRole(new Role(ConstDefined.ROLE_USER));
 			}
-			
+
 			// tạo user mặc định ADMIN
 			UserInfo user = userService.findByUsername("admin");
 			if (user == null) {
@@ -58,7 +51,16 @@ public class SpringbootApplication {
 				user.setUsername("admin");
 				user.setPassword("admin123");
 				user.setCreateDate(new Date());
+				user.setCreateUser("admin");
 				userService.addUser(user);
+				userService.addRoleToUser(user.getUsername(), ConstDefined.ROLE_ADMIN);
+			}
+
+			// tạo SystemParameter table
+			if (paramService.getParameters().size() == 0) {
+				paramService.addParameter(new SystemParameter(ConstDefined.SERECT_KEY, "minchu"));
+				paramService.addParameter(new SystemParameter(ConstDefined.OPEN_TIME, "10"));
+				paramService.addParameter(new SystemParameter(ConstDefined.CLOSE_TIME, "20"));
 			}
 		};
 	}

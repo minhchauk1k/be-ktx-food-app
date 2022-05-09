@@ -46,7 +46,7 @@ public class RoleService {
 
 	}
 
-	public List<Role> getAllRoles() {
+	public List<Role> getRoles() {
 		return roleRepo.findAll();
 	}
 }

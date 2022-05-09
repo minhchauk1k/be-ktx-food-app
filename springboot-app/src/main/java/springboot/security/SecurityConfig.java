@@ -2,6 +2,7 @@ package springboot.security;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,13 +18,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import lombok.RequiredArgsConstructor;
+import springboot.common.ConstDefined;
 import springboot.filter.CustomAuthenticationFilter;
 import springboot.filter.CustomAuthorizationFilter;
+import springboot.service.CommonService;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	@Autowired
+	private final CommonService commonService;
+	
 	private final UserDetailsService userDetailsService;
 	private final BCryptPasswordEncoder passwordEncoder;
 
@@ -34,9 +41,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(
+				authenticationManagerBean(), commonService);
+		// check for login
 		customAuthenticationFilter.setFilterProcessesUrl("/login");
-		
+
 		// disable login
 		http.csrf().disable();
 
@@ -53,11 +62,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/login").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/refresh_token/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/all/**").permitAll();
-		http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/add/**").hasAuthority("ADMIN");
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/**").hasAuthority("ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/add/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/common/**").permitAll();
 		// not allow if don't have role
 		http.authorizeRequests().anyRequest().authenticated();
-		
+
 		// set filter
 		http.addFilter(customAuthenticationFilter);
 		http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

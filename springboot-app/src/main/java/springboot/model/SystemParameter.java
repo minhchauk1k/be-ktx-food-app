@@ -2,6 +2,9 @@ package springboot.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -18,10 +21,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "system_parameter")
 public class SystemParameter {
-	@Column(nullable = false, columnDefinition = "default minchu")
-	private String serectKey;
-	@Column(nullable = false, columnDefinition = "default 9")
-	private int openTime;
-	@Column(nullable = false, columnDefinition = "default 20")
-	private int closeTime;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(nullable = false, updatable = false)
+	private int id;
+	@Column(nullable = false)
+	private String parameterKey;
+	@Column(nullable = false)
+	private String parameterValue;
+	
+	public SystemParameter(String parameterKey, String parameterValue) {
+		super();
+		this.parameterKey = parameterKey;
+		this.parameterValue = parameterValue;
+	}
 }

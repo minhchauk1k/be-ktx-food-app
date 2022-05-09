@@ -1,6 +1,7 @@
 package springboot.controller;
 
 import java.io.IOException;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,10 +38,10 @@ import springboot.model.Role;
 import springboot.model.UserInfo;
 import springboot.service.UserInfoService;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@Slf4j
 public class UserInfoController {
 	private final UserInfoService userService;
 	private static final String BEARER = "Bearer ";

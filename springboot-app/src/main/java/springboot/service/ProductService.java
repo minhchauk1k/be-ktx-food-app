@@ -29,7 +29,7 @@ public class ProductService {
 		return productRepo.save(product);
 	}
 
-	public List<Product> getAllProducts() {
+	public List<Product> getProducts() {
 		return productRepo.findAll();
 	}
 
@@ -40,8 +40,13 @@ public class ProductService {
 	}
 
 	public Product findProductById(Long id) {
-		return productRepo.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Product by id " + id + "was not found!"));
+		try {
+			return productRepo.findById(id)
+					.orElseThrow(() -> new EntityNotFoundException("Product by id " + id + "was not found!"));
+		} catch (Exception e) {
+			return null;
+		}
+
 	}
 
 	public void deteteProductById(Long id) {
