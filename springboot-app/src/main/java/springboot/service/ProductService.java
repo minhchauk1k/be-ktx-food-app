@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Product;
 import springboot.repository.ProductRepository;
 
-@Service
+@Service @Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class ProductService {
@@ -26,6 +27,7 @@ public class ProductService {
 		product.setCreateUser("admin");
 		product.setUpdateDate(new Date());
 		product.setUpdateUser("admin");
+		log.info("Added new Product: {}", product.getProductCode());
 		return productRepo.save(product);
 	}
 

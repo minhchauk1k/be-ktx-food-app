@@ -27,10 +27,10 @@ import springboot.service.CommonService;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
+
 	@Autowired
 	private final CommonService commonService;
-	
+
 	private final UserDetailsService userDetailsService;
 	private final BCryptPasswordEncoder passwordEncoder;
 
@@ -70,9 +70,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// set filter
 		http.addFilter(customAuthenticationFilter);
-		http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new CustomAuthorizationFilter(commonService), UsernamePasswordAuthenticationFilter.class);
 	}
-	
+
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -83,7 +83,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.setAllowCredentials(true);
 		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-		corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
+		corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
+				"Accept", "Authorization", "Origin, Accept", "X-Requested-With", "Access-Control-Request-Method",
+				"Access-Control-Request-Headers"));
 		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		return corsConfiguration;
 	}

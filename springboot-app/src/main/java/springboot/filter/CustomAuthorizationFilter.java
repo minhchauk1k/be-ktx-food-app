@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,8 +32,11 @@ import springboot.service.CommonService;
 
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
-	@Autowired
-	private CommonService commonService;
+	private final CommonService commonService;
+
+	public CustomAuthorizationFilter(CommonService commonService) {
+		this.commonService = commonService;
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
