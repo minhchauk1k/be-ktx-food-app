@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import springboot.model.UserInfo;
 
 @Repository
-public interface UserInfoRepository extends JpaRepository<UserInfo, Integer> {
-	Optional<UserInfo> findById(int i);
+public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
+	Optional<UserInfo> findById(Long i);
 	
 	Optional<UserInfo> findByUsername(String name);
 
-	void deleteById(int id);
+	void deleteById(Long id);
 }

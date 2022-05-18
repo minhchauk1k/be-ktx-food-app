@@ -33,25 +33,25 @@ public class ProductController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Product> getProductById(@PathVariable("id") Long id) {
-		Product product = productService.findProductById(id);
+		Product product = productService.findById(id);
 		return new ResponseEntity<>(product, HttpStatus.OK);
 	}
 
 	@PostMapping("/add")
 	public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-		Product newProduct = productService.addProduct(product);
+		Product newProduct = productService.add(product);
 		return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/update")
 	public ResponseEntity<Product> updateProduct(@RequestBody Product product) {
-		Product updateProduct = productService.updateProduct(product);
+		Product updateProduct = productService.update(product);
 		return new ResponseEntity<>(updateProduct, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deletetProduct(@PathVariable("id") Long id) {
-		productService.deteteProductById(id);
+		productService.softDeleteById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

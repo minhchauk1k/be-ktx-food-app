@@ -42,6 +42,7 @@ public class Product implements Serializable {
 	private String description;
 	private String category;
 	private String type;
+	private String discountType;
 	private boolean isDeleted;
 	private boolean isDiscount;
 	private Date discountFromDate;

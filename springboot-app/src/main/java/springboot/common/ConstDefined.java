@@ -17,7 +17,7 @@ public class ConstDefined {
 	public static final String CLOSE_TIME = "CLOSE_TIME";
 	
 	// Date & Time
-	public static final int HOUR = 60 * 60;
+	public static final int HOUR = 60 * 60 * 1000;
 	public static final int DAY = HOUR * 24;
 	public static final int WEEK = DAY * 7;
 }

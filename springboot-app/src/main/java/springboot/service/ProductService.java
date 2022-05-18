@@ -12,13 +12,14 @@ import springboot.exception.EntityNotFoundException;
 import springboot.model.Product;
 import springboot.repository.ProductRepository;
 
-@Service @Slf4j
+@Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class ProductService {
 	private final ProductRepository productRepo;
 
-	public Product addProduct(Product product) {
+	public Product add(Product product) {
 		if (product.getProductCode().isEmpty()) {
 			String createCode = "PD_" + String.format("%05d", productRepo.count());
 			product.setProductCode(createCode);
@@ -35,28 +36,61 @@ public class ProductService {
 		return productRepo.findAll();
 	}
 
-	public Product updateProduct(Product product) {
-		product.setUpdateDate(new Date());
-		product.setUpdateUser("admin");
-		return productRepo.save(product);
+	public Product update(Product product) {
+		Product entity = findById(product.getId());
+		if (entity == null) {
+			entity = findByCode(product.getProductCode());
+		}
+
+		if (entity != null) {
+			product.setCreateUser(entity.getCreateUser());
+			product.setCreateDate(entity.getCreateDate());
+			product.setUpdateDate(new Date());
+			product.setUpdateUser("admin");
+			log.info("Updated a Product: {}", product.getProductCode());
+			return productRepo.save(product);
+		} else {
+			throw new EntityNotFoundException("Product with id: " + product.getId() + " was not found!");
+		}
 	}
 
-	public Product findProductById(Long id) {
+	public Product findById(Long id) {
 		try {
 			return productRepo.findById(id)
 					.orElseThrow(() -> new EntityNotFoundException("Product by id " + id + "was not found!"));
 		} catch (Exception e) {
 			return null;
 		}
-
 	}
 
-	public void deteteProductById(Long id) {
-		Product entity = this.findProductById(id);
-		entity.setUpdateDate(new Date());
-		entity.setUpdateUser("admin");
-		entity.setDeleted(true);
-		productRepo.save(entity);
-//		productRepo.deteteById(id);
+	public Product findByCode(String code) {
+		try {
+			return productRepo.findByProductCode(code)
+					.orElseThrow(() -> new EntityNotFoundException("Product by code " + code + "was not found!"));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public void softDeleteById(Long id) {
+		Product entity = findById(id);
+		if (entity != null) {
+			entity.setUpdateDate(new Date());
+			entity.setUpdateUser("admin");
+			entity.setDeleted(true);
+			log.info("Soft delete a Product: {}", entity.getProductCode());
+			productRepo.save(entity);
+		} else {
+			throw new EntityNotFoundException("Product with id: " + id + " was not found!");
+		}
+	}
+
+	public void deleteById(Long id) {
+		Product entity = findById(id);
+		if (entity != null) {
+			productRepo.deleteById(id);
+		} else {
+			throw new EntityNotFoundException("Product with id: " + id + " was not found!");
+		}
 	}
 }

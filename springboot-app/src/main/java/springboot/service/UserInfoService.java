@@ -63,17 +63,19 @@ public class UserInfoService implements UserDetailsService {
 		return userRepo.findAll();
 	}
 	
-	public void softDeleteById(int id) {
-		UserInfo user = findById(id);
-		if (user != null) {
-			user.setDeleted(true);
-			userRepo.save(user);
+	public void softDeleteById(Long id) {
+		UserInfo entity = findById(id);
+		if (entity != null) {
+			entity.setUpdateDate(new Date());
+			entity.setUpdateUser("admin");
+			entity.setDeleted(true);
+			userRepo.save(entity);
 		} else {
 			throw new EntityNotFoundException("User with id: " + id + " was not found!");
 		}
 	}
 
-	public void deleteById(int id) {
+	public void deleteById(Long id) {
 		UserInfo user = findById(id);
 		if (user != null) {
 			userRepo.deleteById(id);
@@ -82,7 +84,7 @@ public class UserInfoService implements UserDetailsService {
 		}
 	}
 
-	public UserInfo findById(int id) {
+	public UserInfo findById(Long id) {
 		try {
 			return userRepo.findById(id)
 					.orElseThrow(() -> new EntityNotFoundException("User with id: " + id + " was not found!"));

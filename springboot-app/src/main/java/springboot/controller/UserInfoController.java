@@ -54,7 +54,7 @@ public class UserInfoController {
 	}
 
 	@GetMapping("/find/{id}")
-	public ResponseEntity<UserInfo> getById(@PathVariable("id") int id) {
+	public ResponseEntity<UserInfo> getById(@PathVariable("id") Long id) {
 		UserInfo user = userService.findById(id);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
@@ -72,7 +72,7 @@ public class UserInfoController {
 	}
 
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
+	public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
 		userService.softDeleteById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

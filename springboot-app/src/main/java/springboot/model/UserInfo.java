@@ -32,7 +32,7 @@ public class UserInfo implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable = false, updatable = false)
-	private Integer id;
+	private Long id;
 	private String displayName;
 	private String userId;
 	@Column(nullable = false, updatable = false)
