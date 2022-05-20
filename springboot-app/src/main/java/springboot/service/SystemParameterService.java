@@ -1,5 +1,6 @@
 package springboot.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,11 @@ public class SystemParameterService {
 	private final SystemParameterRepository paramRepo;
 
 	public List<SystemParameter> getParameters() {
-		return paramRepo.findAll();
+		try {
+			return paramRepo.findAll();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
 	}
 
 	public SystemParameter addParameter(SystemParameter param) {

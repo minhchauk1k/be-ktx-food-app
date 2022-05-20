@@ -9,9 +9,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import springboot.common.ConstDefined;
+import springboot.model.Category;
 import springboot.model.Role;
 import springboot.model.SystemParameter;
 import springboot.model.UserInfo;
+import springboot.service.CategoryService;
 import springboot.service.RoleService;
 import springboot.service.SystemParameterService;
 import springboot.service.UserInfoService;
@@ -33,7 +35,7 @@ public class SpringbootApplication {
 	 */
 	@Bean
 	CommandLineRunner createDefaultDB(RoleService roleService, UserInfoService userService,
-			SystemParameterService paramService) {
+			SystemParameterService paramService, CategoryService categoryService) {
 		return args -> {
 			// tạo Role table
 			if (roleService.getRoles().size() == 0) {
@@ -42,6 +44,12 @@ public class SpringbootApplication {
 				roleService.addRole(new Role(ConstDefined.ROLE_OWNER));
 				roleService.addRole(new Role(ConstDefined.ROLE_STAFF));
 				roleService.addRole(new Role(ConstDefined.ROLE_USER));
+			}
+
+			// tạo Category table
+			if (categoryService.getCategorys().size() == 0) {
+				categoryService.add(new Category(ConstDefined.ALL, "Tất cả", ConstDefined.FOOD));
+				categoryService.add(new Category( ConstDefined.DISCOUNT, "Đang giảm giá", ConstDefined.FOOD));
 			}
 
 			// tạo user mặc định ADMIN

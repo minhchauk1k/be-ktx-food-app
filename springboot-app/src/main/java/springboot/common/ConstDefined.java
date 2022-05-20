@@ -20,4 +20,14 @@ public class ConstDefined {
 	public static final int HOUR = 60 * 60 * 1000;
 	public static final int DAY = HOUR * 24;
 	public static final int WEEK = DAY * 7;
+	
+	//Type
+	public static final String FOOD = "FOOD";
+	public static final String SERVICE = "SERVICE";
+	public static final String ALL = "ALL";
+	public static final String DISCOUNT = "DISCOUNT";
+	
+	//PayType
+	public static final String MONEY = "MONEY";
+	public static final String MOMO = "MOMO";
 }

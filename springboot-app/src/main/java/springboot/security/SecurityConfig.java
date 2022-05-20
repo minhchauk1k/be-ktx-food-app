@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// custom access
 		http.authorizeRequests().antMatchers("/login").permitAll();
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/refresh_token/**").permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/refresh_token/**", "/common/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/all/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/add/**").hasAuthority(ConstDefined.ROLE_ADMIN);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/**").hasAuthority(ConstDefined.ROLE_ADMIN);

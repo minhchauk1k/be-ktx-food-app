@@ -31,6 +31,13 @@ public class ProductController {
 		return new ResponseEntity<>(productsList, HttpStatus.OK);
 	}
 
+	@GetMapping("/all/{type}/{isDelete}")
+	public ResponseEntity<List<Product>> getAllProductsWithParam(@PathVariable("type") String type,
+			@PathVariable("isDelete") boolean isDelete) {
+		List<Product> productsList = productService.getProductsWithParams(type, isDelete);
+		return new ResponseEntity<>(productsList, HttpStatus.OK);
+	}
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Product> getProductById(@PathVariable("id") Long id) {
 		Product product = productService.findById(id);

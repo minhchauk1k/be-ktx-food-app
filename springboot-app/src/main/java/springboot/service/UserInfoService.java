@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import springboot.common.ConstDefined;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Role;
 import springboot.model.UserInfo;
@@ -27,7 +29,9 @@ import springboot.repository.UserInfoRepository;
 @Transactional
 @Slf4j
 public class UserInfoService implements UserDetailsService {
+	@Autowired
 	private final UserInfoRepository userRepo;
+	@Autowired
 	private final RoleService roleService;
 	private final PasswordEncoder pwEncoder;
 
@@ -49,6 +53,7 @@ public class UserInfoService implements UserDetailsService {
 		user.setCreateDate(new Date());
 		user.setCreateUser(getCurrentUser());
 		log.info("Created user: {}", user.getUsername());
+		addRoleToUser(user.getUsername(),ConstDefined.ROLE_USER);
 		return userRepo.save(user);
 	}
 
@@ -60,7 +65,11 @@ public class UserInfoService implements UserDetailsService {
 	}
 
 	public List<UserInfo> getUsers() {
-		return userRepo.findAll();
+		try {
+			return userRepo.findAll();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
 	}
 	
 	public void softDeleteById(Long id) {
@@ -107,6 +116,7 @@ public class UserInfoService implements UserDetailsService {
 		UserInfo user = findByUsername(username);
 		Role role = roleService.findRoleByName(rolename);
 		if (user != null && role != null) {
+			log.info("Add role: {} cho user: {}", new Object[] { role.getName(), user.getUsername()});
 			user.getRoles().add(role);
 		} else {
 			throw new EntityNotFoundException("Can't add role: " + rolename + " to user: " + username);

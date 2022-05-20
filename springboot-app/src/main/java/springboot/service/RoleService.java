@@ -1,7 +1,9 @@
 package springboot.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import springboot.repository.RoleRepository;
 @RequiredArgsConstructor
 @Transactional
 public class RoleService {
+	@Autowired
 	private final RoleRepository roleRepo;
 
 	public Role addRole(Role role) {
@@ -47,6 +50,10 @@ public class RoleService {
 	}
 
 	public List<Role> getRoles() {
-		return roleRepo.findAll();
+		try {
+			return roleRepo.findAll();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
 	}
 }

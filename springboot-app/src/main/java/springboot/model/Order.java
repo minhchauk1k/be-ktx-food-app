@@ -11,7 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -26,32 +26,29 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_info")
+@Table(name = "order")
 @SuppressWarnings("serial")
-public class UserInfo implements Serializable {
+public class Order implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable = false, updatable = false)
 	private Long id;
-	private String displayName;
+	@Column(nullable = false, updatable = false)
+	private String orderCode;
 	private String userCode;
 	@Column(nullable = false, updatable = false)
-	private String username;
+	private String payType;
+	private String note;
+	@Column(nullable = false)
+	@OneToMany(fetch = FetchType.EAGER)
+	private List<OrderDetails> details = new ArrayList<>();
 	@Column(nullable = false, updatable = false)
-	private String password;
 	private String phoneNumber;
-	private String email;
+	@Column(nullable = false, updatable = false)
 	private String addresss;
-	private String urlAvatar;
-	private boolean isDeleted;
-	private boolean isActive;
-	private Date lastLoginDate;
-	@ManyToMany(fetch = FetchType.EAGER)
-	private List<Role> roles = new ArrayList<>();
 	@Column(nullable = false, updatable = false)
 	private String createUser;
-	private String updateUser;
 	@Column(nullable = false, updatable = false)
 	private Date createDate;
-	private Date updateDate;
+
 }
