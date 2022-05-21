@@ -19,15 +19,15 @@ import lombok.Setter;
 
 @Entity
 @Data
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "product")
+@Table(name = "products")
 @SuppressWarnings("serial")
 public class Product implements Serializable {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
 	@Column(nullable = false, updatable = false)
@@ -36,6 +36,7 @@ public class Product implements Serializable {
 	private String productName;
 	@Column(nullable = false)
 	private BigDecimal price;
+	private BigDecimal finalPrice;
 	private BigDecimal discountNumber;
 	private BigDecimal discountPercent;
 	private String urlAvatar;

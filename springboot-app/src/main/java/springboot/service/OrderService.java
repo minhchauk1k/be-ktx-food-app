@@ -1,7 +1,6 @@
 package springboot.service;
 
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,20 +21,18 @@ public class OrderService {
 	private final OrderDetailsRepository detailsRepo;
 
 	public Order add(Order order) {
-		if (order.getOrderCode().isEmpty()) {
-			String createCode = "ODR_" + String.format("%05d", orderRepo.count());
+		if (order.getOrderCode() == null || order.getOrderCode().isEmpty()) {
+			String createCode = "ODR_" + String.format("%05d", orderRepo.count() + 1);
 			order.setOrderCode(createCode);
 		}
+
+		for (OrderDetails detail : order.getDetails()) {
+			detail.setOrder(order);
+		}
+
 		order.setCreateDate(new Date());
 		order.setCreateUser("admin");
-		addDetails(order.getDetails());
-		log.info("Added new OrderDetail of Order: {}", order.getOrderCode());
 		log.info("Added new Order: {}", order.getOrderCode());
 		return orderRepo.save(order);
 	}
-
-	public List<OrderDetails> addDetails(List<OrderDetails> details) {
-		return detailsRepo.saveAll(details);
-	}
-
 }

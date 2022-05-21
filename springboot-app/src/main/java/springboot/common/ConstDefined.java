@@ -26,6 +26,8 @@ public class ConstDefined {
 	public static final String SERVICE = "SERVICE";
 	public static final String ALL = "ALL";
 	public static final String DISCOUNT = "DISCOUNT";
+	public static final String NUMBER = "NUMBER";
+	public static final String PERCENT = "PERCENT";
 	
 	//PayType
 	public static final String MONEY = "MONEY";

@@ -22,7 +22,7 @@ public class RoleService {
 	private final RoleRepository roleRepo;
 
 	public Role addRole(Role role) {
-		log.info("Added new Role: {}", role.getName());
+		log.info("Added new Role: {}", role.getRoleName());
 		return roleRepo.save(role);
 	}
 
@@ -41,7 +41,7 @@ public class RoleService {
 
 	public Role findRoleByName(String name) {
 		try {
-			return roleRepo.findByName(name)
+			return roleRepo.findByRoleName(name)
 					.orElseThrow(() -> new EntityNotFoundException("Role by name " + name + " was not found!"));
 		} catch (EntityNotFoundException e) {
 			return null;

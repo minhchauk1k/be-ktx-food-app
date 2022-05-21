@@ -1,13 +1,14 @@
 package springboot.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,29 +27,32 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "order")
+@Table(name = "orders")
 @SuppressWarnings("serial")
 public class Order implements Serializable {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
 	@Column(nullable = false, updatable = false)
 	private String orderCode;
+	private String note;
+	@Column(nullable = false)
+	private String userDisplayName;
 	private String userCode;
 	@Column(nullable = false, updatable = false)
 	private String payType;
-	private String note;
-	@Column(nullable = false)
-	@OneToMany(fetch = FetchType.EAGER)
-	private List<OrderDetails> details = new ArrayList<>();
 	@Column(nullable = false, updatable = false)
 	private String phoneNumber;
 	@Column(nullable = false, updatable = false)
-	private String addresss;
+	private String address;
 	@Column(nullable = false, updatable = false)
 	private String createUser;
 	@Column(nullable = false, updatable = false)
 	private Date createDate;
+	private BigDecimal totalAmount;
+	private int totalQty;
 
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderDetails> details = new ArrayList<>();
 }

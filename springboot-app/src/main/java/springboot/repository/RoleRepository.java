@@ -9,7 +9,7 @@ import springboot.model.Role;
 public interface RoleRepository extends JpaRepository<Role, Long> {
 	Optional<Role> findById(Long id);
 	
-	Optional<Role> findByName(String name);
+	Optional<Role> findByRoleName(String name);
 	
 	void deleteById(Long id);
 }

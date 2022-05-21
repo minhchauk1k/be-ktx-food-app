@@ -44,6 +44,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 		switch (request.getServletPath()) {
 		case "/login":
 		case "/user/refresh_token":
+		case "/order/add":
 			filterChain.doFilter(request, response);
 			break;
 		default:

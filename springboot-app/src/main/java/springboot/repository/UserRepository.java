@@ -5,13 +5,13 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import springboot.model.UserInfo;
+import springboot.model.User;
 
 @Repository
-public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
-	Optional<UserInfo> findById(Long i);
+public interface UserRepository extends JpaRepository<User, Long> {
+	Optional<User> findById(Long i);
 	
-	Optional<UserInfo> findByUsername(String name);
+	Optional<User> findByUsername(String name);
 
 	void deleteById(Long id);
 }

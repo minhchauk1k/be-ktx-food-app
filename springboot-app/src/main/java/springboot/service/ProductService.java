@@ -1,5 +1,6 @@
 package springboot.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import springboot.common.ConstDefined;
 import springboot.exception.EntityNotFoundException;
+import springboot.model.Category;
 import springboot.model.Product;
 import springboot.repository.ProductRepository;
 
@@ -21,18 +24,58 @@ import springboot.repository.ProductRepository;
 public class ProductService {
 	@Autowired
 	private final ProductRepository productRepo;
+	@Autowired
+	private final CommonService commonService;
+	@Autowired
+	private final CategoryService categoryService;
 
-	public Product add(Product product) {
-		if (product.getProductCode().isEmpty()) {
+	private Product _add(Product product) {
+		// tạo ProductCode
+		if (product.getProductCode() == null || product.getProductCode().isEmpty()) {
 			String createCode = "PD_" + String.format("%05d", productRepo.count() + 1);
 			product.setProductCode(createCode);
 		}
+
+		// tạo FinalPrice
+		if (product.isDiscount()) {
+			switch (product.getDiscountType()) {
+			case ConstDefined.NUMBER:
+				product.setFinalPrice(product.getPrice().subtract(product.getDiscountNumber()));
+				product.setDiscountPercent(BigDecimal.ZERO);
+				break;
+
+			case ConstDefined.PERCENT:
+				BigDecimal hundred = new BigDecimal(100);
+				BigDecimal discount = product.getPrice().multiply(product.getDiscountPercent());
+				BigDecimal discountHundred = discount.divide(hundred);
+				product.setFinalPrice(product.getPrice().subtract(discountHundred));
+				product.setDiscountNumber(BigDecimal.ZERO);
+				break;
+			}
+		} else {
+			product.setFinalPrice(product.getPrice());
+			product.setDiscountPercent(BigDecimal.ZERO);
+			product.setDiscountNumber(BigDecimal.ZERO);
+		}
+
 		product.setCreateDate(new Date());
-		product.setCreateUser("admin");
+		product.setCreateUser(commonService.getCurrentUser());
 		product.setUpdateDate(new Date());
-		product.setUpdateUser("admin");
+		product.setUpdateUser(commonService.getCurrentUser());
 		log.info("Added new Product: {}", product.getProductName());
 		return productRepo.save(product);
+	}
+
+	public Product add(Product product) {
+		product = _add(product);
+		addCategory(product.getCategory(), product.getCategory(), product.getType());
+		return product;
+	}
+
+	private void addCategory(String key, String value, String type) {
+		if (!categoryService.isExist(key, value, type)) {
+			categoryService.add(new Category(key, value, type));
+		}
 	}
 
 	public List<Product> getProducts() {
@@ -43,7 +86,7 @@ public class ProductService {
 		}
 	}
 
-	public List<Product> getProductsWithParams(String type, boolean isDelete) {
+	public List<Product> getByTypeAndIsDelete(String type, boolean isDelete) {
 		try {
 			return productRepo.findByTypeAndIsDeleted(type, isDelete);
 		} catch (Exception e) {
@@ -61,8 +104,34 @@ public class ProductService {
 			product.setCreateUser(entity.getCreateUser());
 			product.setCreateDate(entity.getCreateDate());
 			product.setUpdateDate(new Date());
-			product.setUpdateUser("admin");
-			log.info("Updated a Product: {}", product.getProductCode());
+			product.setUpdateUser(commonService.getCurrentUser());
+			
+			// tạo FinalPrice
+			if (product.isDiscount()) {
+				switch (product.getDiscountType()) {
+				case ConstDefined.NUMBER:
+					product.setFinalPrice(product.getPrice().subtract(product.getDiscountNumber()));
+					product.setDiscountPercent(BigDecimal.ZERO);
+					break;
+
+				case ConstDefined.PERCENT:
+					BigDecimal hundred = new BigDecimal(100);
+					BigDecimal discount = product.getPrice().multiply(product.getDiscountPercent());
+					BigDecimal discountHundred = discount.divide(hundred);
+					product.setFinalPrice(product.getPrice().subtract(discountHundred));
+					product.setDiscountNumber(BigDecimal.ZERO);
+					break;
+				}
+			} else {
+				product.setFinalPrice(product.getPrice());
+				product.setDiscountPercent(BigDecimal.ZERO);
+				product.setDiscountNumber(BigDecimal.ZERO);
+			}
+
+			// thêm mới Category nếu chưa tồn tại
+			addCategory(product.getCategory(), product.getCategory(), product.getType());
+
+			log.info("Updated a Product: {}", entity.getProductCode());
 			return productRepo.save(product);
 		} else {
 			throw new EntityNotFoundException("Product with id: " + product.getId() + " was not found!");

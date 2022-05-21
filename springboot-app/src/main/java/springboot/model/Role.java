@@ -21,18 +21,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "role")
+@Table(name = "roles")
 @SuppressWarnings("serial")
 public class Role implements Serializable {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
 	@Column(nullable = false, updatable = false)
-	private String name;
-	
-	public Role(String name) {
+	private String roleName;
+
+	public Role(String roleName) {
 		super();
-		this.name = name;
+		this.roleName = roleName;
 	}
 }

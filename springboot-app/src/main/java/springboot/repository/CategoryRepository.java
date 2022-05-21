@@ -1,5 +1,6 @@
 package springboot.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,11 +13,13 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	Optional<Category> findById(Long id);
 
 	Optional<Category> findByCategoryKey(String key);
-	
+
 	Optional<Category> findByCategoryValue(String value);
+	
+	List<Category> findByType(String type);
 
 	void deleteById(Long id);
 
-	boolean existsByCategoryValueAndType(String value, String type);
-	
+	boolean existsByCategoryKeyAndCategoryValueAndType(String key, String value, String type);
+
 }

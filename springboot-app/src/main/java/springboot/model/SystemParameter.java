@@ -19,17 +19,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "system_parameter")
+@Table(name = "system_parameters")
 public class SystemParameter {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private int id;
 	@Column(nullable = false)
 	private String parameterKey;
 	@Column(nullable = false)
 	private String parameterValue;
-	
+
 	public SystemParameter(String parameterKey, String parameterValue) {
 		super();
 		this.parameterKey = parameterKey;

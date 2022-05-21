@@ -21,11 +21,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "category")
+@Table(name = "categories")
 @SuppressWarnings("serial")
 public class Category implements Serializable {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
 	@Column(nullable = false, updatable = false)
@@ -34,13 +34,12 @@ public class Category implements Serializable {
 	private String categoryKey;
 	@Column(nullable = false)
 	private String categoryValue;
-	
+
 	public Category(String categoryKey, String categoryValue, String type) {
 		super();
 		this.categoryKey = categoryKey;
 		this.categoryValue = categoryValue;
 		this.type = type;
 	}
-	
-	
+
 }

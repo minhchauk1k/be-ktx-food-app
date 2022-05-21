@@ -12,11 +12,11 @@ import springboot.common.ConstDefined;
 import springboot.model.Category;
 import springboot.model.Role;
 import springboot.model.SystemParameter;
-import springboot.model.UserInfo;
+import springboot.model.User;
 import springboot.service.CategoryService;
 import springboot.service.RoleService;
 import springboot.service.SystemParameterService;
-import springboot.service.UserInfoService;
+import springboot.service.UserService;
 
 @SpringBootApplication
 public class SpringbootApplication {
@@ -34,7 +34,7 @@ public class SpringbootApplication {
 	 * Đoạn code tao data mặc định cho DB
 	 */
 	@Bean
-	CommandLineRunner createDefaultDB(RoleService roleService, UserInfoService userService,
+	CommandLineRunner createDefaultDB(RoleService roleService, UserService userService,
 			SystemParameterService paramService, CategoryService categoryService) {
 		return args -> {
 			// tạo Role table
@@ -47,20 +47,22 @@ public class SpringbootApplication {
 			}
 
 			// tạo Category table
-			if (categoryService.getCategorys().size() == 0) {
+			if (categoryService.getCategories().size() == 0) {
 				categoryService.add(new Category(ConstDefined.ALL, "Tất cả", ConstDefined.FOOD));
-				categoryService.add(new Category( ConstDefined.DISCOUNT, "Đang giảm giá", ConstDefined.FOOD));
+				categoryService.add(new Category(ConstDefined.ALL, "Tất cả", ConstDefined.SERVICE));
+				categoryService.add(new Category(ConstDefined.DISCOUNT, "Đang giảm giá", ConstDefined.FOOD));
+				categoryService.add(new Category(ConstDefined.DISCOUNT, "Đang giảm giá", ConstDefined.SERVICE));
 			}
 
 			// tạo user mặc định ADMIN
-			UserInfo user = userService.findByUsername("admin");
+			User user = userService.findByUsername("admin");
 			if (user == null) {
-				user = new UserInfo();
+				user = new User();
 				user.setUsername("admin");
 				user.setPassword("admin123");
 				user.setCreateDate(new Date());
 				user.setCreateUser("admin");
-				userService.addUser(user);
+				userService.add(user);
 				userService.addRoleToUser(user.getUsername(), ConstDefined.ROLE_ADMIN);
 			}
 

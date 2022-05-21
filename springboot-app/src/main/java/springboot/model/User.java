@@ -26,14 +26,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_info")
+@Table(name = "users")
 @SuppressWarnings("serial")
-public class UserInfo implements Serializable {
+public class User implements Serializable {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
 	private String displayName;
+	@Column(nullable = false, updatable = false)
 	private String userCode;
 	@Column(nullable = false, updatable = false)
 	private String username;
@@ -46,8 +47,10 @@ public class UserInfo implements Serializable {
 	private boolean isDeleted;
 	private boolean isActive;
 	private Date lastLoginDate;
-	@ManyToMany(fetch = FetchType.EAGER)
+
+	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Role> roles = new ArrayList<>();
+
 	@Column(nullable = false, updatable = false)
 	private String createUser;
 	private String updateUser;

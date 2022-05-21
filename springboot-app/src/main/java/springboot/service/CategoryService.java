@@ -22,13 +22,22 @@ public class CategoryService {
 	private CategoryRepository categoryRepo;
 
 	public Category add(Category category) {
-		log.info("Added new Category: {}", category.getCategoryKey());
+		log.info("Added new Category: {} with Type: {}",
+				new Object[] { category.getCategoryKey(), category.getType() });
 		return categoryRepo.save(category);
 	}
 
-	public List<Category> getCategorys() {
+	public List<Category> getCategories() {
 		try {
 			return categoryRepo.findAll();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
+
+	public List<Category> getByType(String type) {
+		try {
+			return categoryRepo.findByType(type);
 		} catch (Exception e) {
 			return new ArrayList<>();
 		}
@@ -50,5 +59,9 @@ public class CategoryService {
 		} else {
 			throw new EntityNotFoundException("Category with id: " + id + " was not found!");
 		}
+	}
+
+	public boolean isExist(String key, String value, String type) {
+		return categoryRepo.existsByCategoryKeyAndCategoryValueAndType(key, value, type);
 	}
 }

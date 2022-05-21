@@ -37,9 +37,9 @@ public class CommonController {
 		return new ResponseEntity<>(params, HttpStatus.OK);
 	}
 	
-	@GetMapping("/categorys")
-	public ResponseEntity<List<Category>> getCategorys() {
-		List<Category> params = categoryService.getCategorys();
+	@GetMapping("/categorys/{type}")
+	public ResponseEntity<List<Category>> getCategorys(@PathVariable("type") String type) {
+		List<Category> params = categoryService.getByType(type);
 		return new ResponseEntity<>(params, HttpStatus.OK);
 	}
 }

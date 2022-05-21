@@ -34,45 +34,44 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import springboot.common.ConstDefined;
 import springboot.model.Role;
-import springboot.model.UserInfo;
-import springboot.service.UserInfoService;
+import springboot.model.User;
+import springboot.service.UserService;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-public class UserInfoController {
-	private final UserInfoService userService;
-	private static final String BEARER = "Bearer ";
-	private static final int hour = 60 * 60;
+public class UserController {
+	private final UserService userService;
 
 	@GetMapping("/all")
-	public ResponseEntity<List<UserInfo>> getUsers() {
-		List<UserInfo> users = userService.getUsers();
+	public ResponseEntity<List<User>> getUsers() {
+		List<User> users = userService.getUsers();
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
 
 	@GetMapping("/find/{id}")
-	public ResponseEntity<UserInfo> getById(@PathVariable("id") Long id) {
-		UserInfo user = userService.findById(id);
+	public ResponseEntity<User> getById(@PathVariable("id") Long id) {
+		User user = userService.findById(id);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<UserInfo> addUser(@RequestBody UserInfo user) {
-		UserInfo newUser = userService.addUser(user);
+	public ResponseEntity<User> add(@RequestBody User user) {
+		User newUser = userService.add(user);
 		return new ResponseEntity<>(newUser, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<UserInfo> updateUser(@RequestBody UserInfo user) {
-		UserInfo updatedUser = userService.updateUser(user);
+	public ResponseEntity<User> update(@RequestBody User user) {
+		User updatedUser = userService.updateUser(user);
 		return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+	public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
 		userService.softDeleteById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -81,16 +80,16 @@ public class UserInfoController {
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-		if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
+		if (authorizationHeader != null && authorizationHeader.startsWith(ConstDefined.BEARER)) {
 			try {
-				String refreshToken = authorizationHeader.substring(BEARER.length());
+				String refreshToken = authorizationHeader.substring(ConstDefined.BEARER.length());
 				Algorithm algorithm = Algorithm.HMAC256("minhchau".getBytes());
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refreshToken);
 				String username = decodedJWT.getSubject();
-				UserInfo user = userService.findByUsername(username);
+				User user = userService.findByUsername(username);
 				String accessToken = JWT.create().withSubject(user.getUsername())
-						.withExpiresAt(new Date(System.currentTimeMillis() + hour * 100))
+						.withExpiresAt(new Date(System.currentTimeMillis() + ConstDefined.WEEK))
 						.withIssuer(request.getRequestURL().toString()).withClaim("roles", getRoleList(user))
 						.sign(algorithm);
 
@@ -117,7 +116,7 @@ public class UserInfoController {
 		}
 	}
 
-	private List<String> getRoleList(UserInfo user) {
-		return user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+	private List<String> getRoleList(User user) {
+		return user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList());
 	}
 }

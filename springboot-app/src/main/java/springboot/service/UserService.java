@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,59 +20,69 @@ import lombok.extern.slf4j.Slf4j;
 import springboot.common.ConstDefined;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Role;
-import springboot.model.UserInfo;
-import springboot.repository.UserInfoRepository;
+import springboot.model.User;
+import springboot.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserInfoService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 	@Autowired
-	private final UserInfoRepository userRepo;
+	private final UserRepository userRepo;
 	@Autowired
 	private final RoleService roleService;
 	private final PasswordEncoder pwEncoder;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserInfo user = findByUsername(username);
+		User user = findByUsername(username);
 		if (user == null) {
 			throw new UsernameNotFoundException("Username: " + username + " is not exist in DB!");
 		}
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		user.getRoles().forEach(role -> {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
+			authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 		});
-		return new User(user.getUsername(), user.getPassword(), authorities);
+		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+				authorities);
 	}
 
-	public UserInfo addUser(UserInfo user) {
+	private User _add(User user) {
+		if (user.getUserCode() == null || user.getUserCode().isEmpty()) {
+			String createCode = "USER_" + String.format("%05d", userRepo.count() + 1);
+			user.setUserCode(createCode);
+		}
 		user.setPassword(pwEncoder.encode(user.getPassword()));
 		user.setCreateDate(new Date());
 		user.setCreateUser(getCurrentUser());
-		log.info("Created user: {}", user.getUsername());
-		addRoleToUser(user.getUsername(),ConstDefined.ROLE_USER);
+		log.info("Added new User: {}", user.getUsername());
 		return userRepo.save(user);
 	}
 
-	public UserInfo updateUser(UserInfo user) {
+	public User add(User user) {
+		user = _add(user);
+		addRoleToUser(user.getUsername(), ConstDefined.ROLE_USER);
+		return user;
+	}
+
+	public User updateUser(User user) {
 		user.setUpdateDate(new Date());
 		user.setUpdateUser(getCurrentUser());
 		log.info("Updated user: {} by {}", new Object[] { user.getUsername(), getCurrentUser() });
 		return userRepo.save(user);
 	}
 
-	public List<UserInfo> getUsers() {
+	public List<User> getUsers() {
 		try {
 			return userRepo.findAll();
 		} catch (Exception e) {
 			return new ArrayList<>();
 		}
 	}
-	
+
 	public void softDeleteById(Long id) {
-		UserInfo entity = findById(id);
+		User entity = findById(id);
 		if (entity != null) {
 			entity.setUpdateDate(new Date());
 			entity.setUpdateUser("admin");
@@ -85,7 +94,7 @@ public class UserInfoService implements UserDetailsService {
 	}
 
 	public void deleteById(Long id) {
-		UserInfo user = findById(id);
+		User user = findById(id);
 		if (user != null) {
 			userRepo.deleteById(id);
 		} else {
@@ -93,7 +102,7 @@ public class UserInfoService implements UserDetailsService {
 		}
 	}
 
-	public UserInfo findById(Long id) {
+	public User findById(Long id) {
 		try {
 			return userRepo.findById(id)
 					.orElseThrow(() -> new EntityNotFoundException("User with id: " + id + " was not found!"));
@@ -103,7 +112,7 @@ public class UserInfoService implements UserDetailsService {
 
 	}
 
-	public UserInfo findByUsername(String name) {
+	public User findByUsername(String name) {
 		try {
 			return userRepo.findByUsername(name)
 					.orElseThrow(() -> new EntityNotFoundException("User with username: " + name + " was not found!"));
@@ -113,10 +122,10 @@ public class UserInfoService implements UserDetailsService {
 	}
 
 	public void addRoleToUser(String username, String rolename) {
-		UserInfo user = findByUsername(username);
+		User user = findByUsername(username);
 		Role role = roleService.findRoleByName(rolename);
 		if (user != null && role != null) {
-			log.info("Add role: {} cho user: {}", new Object[] { role.getName(), user.getUsername()});
+			log.info("Add role: {} cho user: {}", new Object[] { role.getRoleName(), user.getUsername() });
 			user.getRoles().add(role);
 		} else {
 			throw new EntityNotFoundException("Can't add role: " + rolename + " to user: " + username);
