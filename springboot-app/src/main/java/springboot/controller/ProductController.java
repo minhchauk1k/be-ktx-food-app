@@ -31,10 +31,16 @@ public class ProductController {
 		return new ResponseEntity<>(productsList, HttpStatus.OK);
 	}
 
-	@GetMapping("/all/{type}/{isDelete}")
+	@GetMapping("/all/type={type}&isDelete={isDelete}")
 	public ResponseEntity<List<Product>> getByTypeAndIsDelete(@PathVariable("type") String type,
 			@PathVariable("isDelete") boolean isDelete) {
 		List<Product> productsList = productService.getByTypeAndIsDelete(type, isDelete);
+		return new ResponseEntity<>(productsList, HttpStatus.OK);
+	}
+
+	@GetMapping("/all/isDelete={isDelete}")
+	public ResponseEntity<List<Product>> getByIsDelete(@PathVariable("isDelete") boolean isDelete) {
+		List<Product> productsList = productService.getByIsDelete(isDelete);
 		return new ResponseEntity<>(productsList, HttpStatus.OK);
 	}
 
@@ -52,8 +58,8 @@ public class ProductController {
 
 	@PutMapping("/update")
 	public ResponseEntity<Product> update(@RequestBody Product product) {
-		Product updateProduct = productService.update(product);
-		return new ResponseEntity<>(updateProduct, HttpStatus.OK);
+		Product updatedProduct = productService.update(product);
+		return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/delete/{id}")

@@ -51,7 +51,10 @@ public class Order implements Serializable {
 	@Column(nullable = false, updatable = false)
 	private Date createDate;
 	private BigDecimal totalAmount;
+	private String orderStatus;
 	private int totalQty;
+	private boolean isPaid;
+	private boolean isCompleted;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderDetails> details = new ArrayList<>();

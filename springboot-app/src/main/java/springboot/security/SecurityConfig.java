@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				authenticationManagerBean(), commonService);
 		// check for login
 		customAuthenticationFilter.setFilterProcessesUrl("/login");
-
+		
 		// disable login
 		http.csrf().disable();
 
@@ -60,12 +60,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// custom access
 		http.authorizeRequests().antMatchers("/login").permitAll();
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/refresh_token/**").permitAll();
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/all/**").permitAll();
+		
+		// những gì trong common đều là public
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/common/**").permitAll();
+		
+		// xử lý với order
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/order/add/**").permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/all/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/order/update/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+
+		// xử lý với user
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/all/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+		
+		// xử lý với product
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/all/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/add/**").hasAuthority(ConstDefined.ROLE_ADMIN);
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/product/update/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/product/delete/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+
 		// not allow if don't have role
 		http.authorizeRequests().anyRequest().authenticated();
 

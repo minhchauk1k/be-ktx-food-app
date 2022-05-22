@@ -94,6 +94,14 @@ public class ProductService {
 		}
 	}
 
+	public List<Product> getByIsDelete(boolean isDelete) {
+		try {
+			return productRepo.findByIsDeleted(isDelete);
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+	}
+
 	public Product update(Product product) {
 		Product entity = findById(product.getId());
 		if (entity == null) {
@@ -105,7 +113,7 @@ public class ProductService {
 			product.setCreateDate(entity.getCreateDate());
 			product.setUpdateDate(new Date());
 			product.setUpdateUser(commonService.getCurrentUser());
-			
+
 			// tạo FinalPrice
 			if (product.isDiscount()) {
 				switch (product.getDiscountType()) {

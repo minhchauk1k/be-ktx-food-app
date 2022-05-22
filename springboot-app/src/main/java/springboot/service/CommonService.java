@@ -51,6 +51,6 @@ public class CommonService {
 	
 	public String getCurrentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return auth.getName();
+		return auth.getName() == null ? ConstDefined.ANONYMOUS : auth.getName();
 	}
 }

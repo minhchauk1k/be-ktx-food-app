@@ -17,4 +17,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	void deleteById(Long id);
 
 	List<Product> findByTypeAndIsDeleted(String type, boolean isDeleted);
+
+	List<Product> findByIsDeleted(boolean isDeleted);
 }
