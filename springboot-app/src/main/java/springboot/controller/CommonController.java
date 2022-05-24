@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import springboot.common.ConstDefined;
+import springboot.enums.MConst;
 import springboot.model.Category;
 import springboot.model.Role;
 import springboot.model.SystemParameter;
@@ -65,24 +65,30 @@ public class CommonController {
 
 	@GetMapping("/categorys/{type}")
 	public ResponseEntity<List<Category>> getCategorys(@PathVariable("type") String type) {
-		List<Category> params = categoryService.getByType(type);
-		return new ResponseEntity<>(params, HttpStatus.OK);
+		List<Category> categories = categoryService.getByType(type);
+		return new ResponseEntity<>(categories, HttpStatus.OK);
+	}
+	
+	@GetMapping("/categorys")
+	public ResponseEntity<List<Category>> getCategorys() {
+		List<Category> categories = categoryService.getCategories();
+		return new ResponseEntity<>(categories, HttpStatus.OK);
 	}
 
 	@GetMapping("/refresh_token")
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-		if (authorizationHeader != null && authorizationHeader.startsWith(ConstDefined.BEARER)) {
+		if (authorizationHeader != null && authorizationHeader.startsWith(MConst.BEARER)) {
 			try {
-				String refreshToken = authorizationHeader.substring(ConstDefined.BEARER.length());
+				String refreshToken = authorizationHeader.substring(MConst.BEARER.length());
 				Algorithm algorithm = Algorithm.HMAC256("minhchau".getBytes());
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refreshToken);
 				String username = decodedJWT.getSubject();
 				User user = userService.findByUsername(username);
 				String accessToken = JWT.create().withSubject(user.getUsername())
-						.withExpiresAt(new Date(System.currentTimeMillis() + ConstDefined.WEEK))
+						.withExpiresAt(new Date(System.currentTimeMillis() + MConst.WEEK))
 						.withIssuer(request.getRequestURL().toString()).withClaim("roles", getRoleList(user))
 						.sign(algorithm);
 

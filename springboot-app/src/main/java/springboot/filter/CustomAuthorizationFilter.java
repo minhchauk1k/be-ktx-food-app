@@ -27,7 +27,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import springboot.common.ConstDefined;
+import springboot.enums.MConst;
 import springboot.service.CommonService;
 
 @Slf4j
@@ -43,15 +43,15 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		switch (request.getServletPath()) {
 		case "/login":
-		case "/order/add":
+//		case "/order/add":
 			filterChain.doFilter(request, response);
 			break;
 		default:
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-			if (authorizationHeader != null && authorizationHeader.startsWith(ConstDefined.BEARER)) {
+			if (authorizationHeader != null && authorizationHeader.startsWith(MConst.BEARER)) {
 				// authorizationHeader != null
 				try {
-					String token = authorizationHeader.substring(ConstDefined.BEARER.length());
+					String token = authorizationHeader.substring(MConst.BEARER.length());
 					Algorithm algorithm = commonService.getAlgorithm();
 					JWTVerifier verifier = JWT.require(algorithm).build();
 					DecodedJWT decodedJWT = verifier.verify(token);

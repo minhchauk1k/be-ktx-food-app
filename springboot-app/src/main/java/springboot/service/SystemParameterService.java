@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import springboot.enums.MConst;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.SystemParameter;
 import springboot.repository.SystemParameterRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -23,6 +26,7 @@ public class SystemParameterService {
 		try {
 			return paramRepo.findAll();
 		} catch (Exception e) {
+			log.info("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -32,11 +36,12 @@ public class SystemParameterService {
 	}
 
 	public SystemParameter getByKey(String key) {
-		try {
-			return paramRepo.findByParameterKey(key)
-					.orElseThrow(() -> new EntityNotFoundException("Parameter with key: " + key + "was not found!"));
-		} catch (Exception e) {
-			return null;
-		}
+		return paramRepo.findByParameterKey(key)
+				.orElseThrow(() -> new EntityNotFoundException("Parameter with key: " + key + " was not found!"));
+	}
+	
+	public boolean getIsLotControl() {
+		String value = getByKey(MConst.LOT_CONTROL).getParameterValue();
+		return value.equals(MConst.YES) ? true: false;
 	}
 }

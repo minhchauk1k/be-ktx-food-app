@@ -1,17 +1,17 @@
 package springboot.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,24 +25,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "order_lots")
 @SuppressWarnings("serial")
-@Table(name = "order_details")
-public class OrderDetails implements Serializable {
+public class OrderLot implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
-	
-	// cái này để tránh gây null cho orderId, ko cần trả về cho json
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(nullable = false, updatable = false)
-	private Order order;
-
-	@ManyToOne
-	@JoinColumn(nullable = false, updatable = false)
-	private Product product;
 
 	@Column(nullable = false, updatable = false)
-	private int qty;
+	private String lotCode;
+	private boolean isCompleted;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Order> details = new ArrayList<>();
 }

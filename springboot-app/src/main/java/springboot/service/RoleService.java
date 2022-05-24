@@ -21,38 +21,31 @@ public class RoleService {
 	@Autowired
 	private final RoleRepository roleRepo;
 
-	public Role addRole(Role role) {
+	public Role add(Role role) {
 		log.info("Added new Role: {}", role.getRoleName());
 		return roleRepo.save(role);
 	}
 
-	public Role updateRole(Role role) {
+	public Role update(Role role) {
 		return roleRepo.save(role);
 	}
 
-	public Role findRoleById(Long id) {
-		try {
-			return roleRepo.findById(id)
-					.orElseThrow(() -> new EntityNotFoundException("Role by id " + id + " was not found!"));
-		} catch (EntityNotFoundException e) {
-			return null;
-		}
+	public Role findById(Long id) {
+		return roleRepo.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Role by id " + id + " was not found!"));
 	}
 
-	public Role findRoleByName(String name) {
-		try {
-			return roleRepo.findByRoleName(name)
-					.orElseThrow(() -> new EntityNotFoundException("Role by name " + name + " was not found!"));
-		} catch (EntityNotFoundException e) {
-			return null;
-		}
+	public Role findByRoleName(String name) {
 
+		return roleRepo.findByRoleName(name)
+				.orElseThrow(() -> new EntityNotFoundException("Role by name " + name + " was not found!"));
 	}
 
 	public List<Role> getRoles() {
 		try {
 			return roleRepo.findAll();
 		} catch (Exception e) {
+			log.info("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}

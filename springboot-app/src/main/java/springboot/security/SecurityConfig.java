@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import lombok.RequiredArgsConstructor;
-import springboot.common.ConstDefined;
+import springboot.enums.MConst;
 import springboot.filter.CustomAuthenticationFilter;
 import springboot.filter.CustomAuthorizationFilter;
 import springboot.service.CommonService;
@@ -65,18 +65,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/common/**").permitAll();
 		
 		// xử lý với order
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/all/**").hasAuthority(MConst.ROLE_ADMIN);
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/order/add/**").permitAll();
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/all/**").hasAuthority(ConstDefined.ROLE_ADMIN);
-		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/order/update/**").hasAuthority(ConstDefined.ROLE_ADMIN);
-
+		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/order/update/**").hasAuthority(MConst.ROLE_ADMIN);
+		
+		// xử lý với role
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/role/all/**").hasAuthority(MConst.ROLE_ADMIN);
+		
+		// xử lý với orderLot
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/lot/**").hasAuthority(MConst.ROLE_ADMIN);
+		
 		// xử lý với user
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/all/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/all/**").hasAuthority(MConst.ROLE_ADMIN);
 		
 		// xử lý với product
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/all/**").permitAll();
-		http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/add/**").hasAuthority(ConstDefined.ROLE_ADMIN);
-		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/product/update/**").hasAuthority(ConstDefined.ROLE_ADMIN);
-		http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/product/delete/**").hasAuthority(ConstDefined.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/add/**").hasAuthority(MConst.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/product/update/**").hasAuthority(MConst.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/product/delete/**").hasAuthority(MConst.ROLE_ADMIN);
 
 		// not allow if don't have role
 		http.authorizeRequests().anyRequest().authenticated();

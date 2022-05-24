@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import springboot.common.ConstDefined;
+import springboot.enums.MConst;
 import springboot.model.Category;
 import springboot.model.Role;
 import springboot.model.SystemParameter;
@@ -30,47 +30,44 @@ public class SpringbootApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-	/**
-	 * Đoạn code tao data mặc định cho DB
-	 */
 	@Bean
 	CommandLineRunner createDefaultDB(RoleService roleService, UserService userService,
 			SystemParameterService paramService, CategoryService categoryService) {
 		return args -> {
 			// tạo Role table
 			if (roleService.getRoles().size() == 0) {
-				roleService.addRole(new Role(ConstDefined.ROLE_ADMIN));
-				roleService.addRole(new Role(ConstDefined.ROLE_MANAGER));
-				roleService.addRole(new Role(ConstDefined.ROLE_OWNER));
-				roleService.addRole(new Role(ConstDefined.ROLE_STAFF));
-				roleService.addRole(new Role(ConstDefined.ROLE_USER));
+				roleService.add(new Role(MConst.ROLE_ADMIN));
+				roleService.add(new Role(MConst.ROLE_MANAGER));
+				roleService.add(new Role(MConst.ROLE_OWNER));
+				roleService.add(new Role(MConst.ROLE_STAFF));
+				roleService.add(new Role(MConst.ROLE_USER));
 			}
 
 			// tạo Category table
 			if (categoryService.getCategories().size() == 0) {
-				categoryService.add(new Category(ConstDefined.ALL, "Tất cả", ConstDefined.FOOD));
-				categoryService.add(new Category(ConstDefined.ALL, "Tất cả", ConstDefined.SERVICE));
-				categoryService.add(new Category(ConstDefined.DISCOUNT, "Đang giảm giá", ConstDefined.FOOD));
-				categoryService.add(new Category(ConstDefined.DISCOUNT, "Đang giảm giá", ConstDefined.SERVICE));
+				categoryService.add(new Category(MConst.ALL, "Tất cả", MConst.FOOD));
+				categoryService.add(new Category(MConst.ALL, "Tất cả", MConst.SERVICE));
+				categoryService.add(new Category(MConst.DISCOUNT, "Đang giảm giá", MConst.FOOD));
+				categoryService.add(new Category(MConst.DISCOUNT, "Đang giảm giá", MConst.SERVICE));
 			}
 
 			// tạo user mặc định ADMIN
-			User user = userService.findByUsername("admin");
-			if (user == null) {
-				user = new User();
+			if (userService.getUsers().size() == 0) {
+				User user = new User();
 				user.setUsername("admin");
 				user.setPassword("admin123");
 				user.setCreateDate(new Date());
 				user.setCreateUser("admin");
 				userService.add(user);
-				userService.addRoleToUser(user.getUsername(), ConstDefined.ROLE_ADMIN);
+				userService.addRoleToUser(user.getUsername(), MConst.ROLE_ADMIN);
 			}
 
 			// tạo SystemParameter table
 			if (paramService.getParameters().size() == 0) {
-				paramService.addParameter(new SystemParameter(ConstDefined.SERECT_KEY, "minchu"));
-				paramService.addParameter(new SystemParameter(ConstDefined.OPEN_TIME, "10"));
-				paramService.addParameter(new SystemParameter(ConstDefined.CLOSE_TIME, "20"));
+				paramService.addParameter(new SystemParameter(MConst.SERECT_KEY, "minchu"));
+				paramService.addParameter(new SystemParameter(MConst.OPEN_TIME, "10"));
+				paramService.addParameter(new SystemParameter(MConst.CLOSE_TIME, "20"));
+				paramService.addParameter(new SystemParameter(MConst.LOT_CONTROL, MConst.YES));
 			}
 		};
 	}

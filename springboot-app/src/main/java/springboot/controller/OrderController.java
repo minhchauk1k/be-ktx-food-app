@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import springboot.model.Order;
+import springboot.model.OrderLot;
+import springboot.service.OrderLotService;
 import springboot.service.OrderService;
 
 @RestController
@@ -23,6 +25,8 @@ import springboot.service.OrderService;
 public class OrderController {
 	@Autowired
 	private final OrderService orderService;
+	@Autowired
+	private final OrderLotService lotService;
 
 	@PostMapping("/add")
 	public ResponseEntity<Order> add(@RequestBody Order order) {
@@ -32,26 +36,56 @@ public class OrderController {
 
 	@GetMapping("/all")
 	public ResponseEntity<List<Order>> getOrders() {
-		List<Order> users = orderService.getOrders();
-		return new ResponseEntity<>(users, HttpStatus.OK);
+		List<Order> orders = orderService.getOrders();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
 
 	@GetMapping("/all/just/paid")
 	public ResponseEntity<List<Order>> getOrdersJustPaid() {
-		List<Order> users = orderService.getOrdersJustPaid();
-		return new ResponseEntity<>(users, HttpStatus.OK);
+		List<Order> orders = orderService.getOrdersJustPaid();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
 
 	@GetMapping("/all/just/repaired")
 	public ResponseEntity<List<Order>> getOrdersJustRepaired() {
-		List<Order> users = orderService.getOrdersJustRepaired();
-		return new ResponseEntity<>(users, HttpStatus.OK);
+		List<Order> orders = orderService.getOrdersJustRepaired();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
+	}
+	
+	@GetMapping("/all/just/delivered")
+	public ResponseEntity<List<Order>> getOrdersJustDelivered() {
+		List<Order> orders = orderService.getOrdersJustDelivered();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
 
-	@PutMapping("/update/id={id}&status={status}")
-	public ResponseEntity<Order> updateByIdAndStatus(@PathVariable("id") Long id,
+	@PutMapping("update/status/id={id}&status={status}")
+	public ResponseEntity<Order> updateStatusByIdAndStatus(@PathVariable("id") Long id,
 			@PathVariable("status") String status) {
 		Order updatedOrder = orderService.updateStatusByIdAndStatus(id, status);
 		return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+	}
+	
+	@PutMapping("update/delivery")
+	public ResponseEntity<Order> deliveryOrders(@RequestBody List<Long> idList) {
+		orderService.deliveryOrders(idList);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@PutMapping("update/complete")
+	public ResponseEntity<Order> completeOrders(@RequestBody List<Long> idList) {
+		orderService.completeOrders(idList);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@GetMapping("/lot/all")
+	public ResponseEntity<List<OrderLot>> getOrderLots() {
+		List<OrderLot> orders = lotService.getOrderLots();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
+	}
+	
+	@GetMapping("/lot/all/incompleted")
+	public ResponseEntity<List<OrderLot>> getOrderLotsIncompleted() {
+		List<OrderLot> orders = lotService.getOrderLotsIncompleted();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
 }

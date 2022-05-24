@@ -16,7 +16,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
 import lombok.RequiredArgsConstructor;
-import springboot.common.ConstDefined;
+import springboot.enums.MConst;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class CommonService {
 	private final SystemParameterService parameterService;
 
 	public String getSerectKey() {
-		return parameterService.getByKey(ConstDefined.SERECT_KEY).getParameterValue();
+		return parameterService.getByKey(MConst.SERECT_KEY).getParameterValue();
 	}
 
 	public Algorithm getAlgorithm() {
@@ -35,13 +35,13 @@ public class CommonService {
 
 	public String genAccessToken(User user, String url) {
 		return JWT.create().withSubject(user.getUsername())
-				.withExpiresAt(new Date(System.currentTimeMillis() + ConstDefined.WEEK)).withIssuer(url)
+				.withExpiresAt(new Date(System.currentTimeMillis() + MConst.WEEK)).withIssuer(url)
 				.withClaim("roles", getRoleList(user)).sign(getAlgorithm());
 	}
 
 	public String genRefreshToken(User user, String url) {
 		return JWT.create().withSubject(user.getUsername())
-				.withExpiresAt(new Date(System.currentTimeMillis() + ConstDefined.WEEK * 2)).withIssuer(url)
+				.withExpiresAt(new Date(System.currentTimeMillis() + MConst.WEEK * 2)).withIssuer(url)
 				.sign(getAlgorithm());
 	}
 
@@ -51,6 +51,6 @@ public class CommonService {
 	
 	public String getCurrentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return auth.getName() == null ? ConstDefined.ANONYMOUS : auth.getName();
+		return auth == null || auth.getName() == null ? MConst.ANONYMOUS : auth.getName();
 	}
 }

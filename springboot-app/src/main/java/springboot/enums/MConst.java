@@ -1,6 +1,6 @@
-package springboot.common;
+package springboot.enums;
 
-public class ConstDefined {
+public class MConst {
 	// String
 	public static final String BEARER = "Bearer ";
 
@@ -16,6 +16,7 @@ public class ConstDefined {
 	public static final String SERECT_KEY = "SERECT_KEY";
 	public static final String OPEN_TIME = "OPEN_TIME";
 	public static final String CLOSE_TIME = "CLOSE_TIME";
+	public static final String LOT_CONTROL = "LOT_CONTROL";
 
 	// Date & Time
 	public static final int HOUR = 60 * 60 * 1000;
@@ -29,15 +30,20 @@ public class ConstDefined {
 	public static final String DISCOUNT = "DISCOUNT";
 	public static final String NUMBER = "NUMBER";
 	public static final String PERCENT = "PERCENT";
+	public static final String YES = "YES";
+	public static final String NO = "NO";
 
 	// PayType
 	public static final String MONEY = "MONEY";
 	public static final String MOMO = "MOMO";
 
 	// Status of Order
+	public static final String ORDER = "ORDER";
 	public static final String WAITFORPAY = "WAITFORPAY";
 	public static final String PAID = "PAID";
 	public static final String PREPARING = "PREPARING";
 	public static final String DELIVERY = "DELIVERY";
+	public static final String COMPLETED = "COMPLETED";
+	public static final String CANCEL = "CANCEL";
 
 }

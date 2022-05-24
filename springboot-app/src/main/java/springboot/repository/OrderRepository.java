@@ -13,9 +13,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	Optional<Order> findById(Long id);
 
 	void deleteById(Long id);
-
+	
 	List<Order> findByOrderStatusIn(List<String> value);
 
 	List<Order> findByOrderStatus(String value);
+	
+	List<Order> findByOrderStatusInAndIsCompleted(List<String> value, boolean isCompleted);
+	
+	List<Order> findByOrderStatusAndIsCompleted(String value, boolean isCompleted);
 
 }

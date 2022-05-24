@@ -31,6 +31,7 @@ public class CategoryService {
 		try {
 			return categoryRepo.findAll();
 		} catch (Exception e) {
+			log.info("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -39,6 +40,7 @@ public class CategoryService {
 		try {
 			return categoryRepo.findByType(type);
 		} catch (Exception e) {
+			log.info("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}

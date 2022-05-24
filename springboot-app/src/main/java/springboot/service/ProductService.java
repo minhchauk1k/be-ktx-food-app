@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import springboot.common.ConstDefined;
+import springboot.enums.MConst;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Category;
 import springboot.model.Product;
@@ -29,7 +29,7 @@ public class ProductService {
 	@Autowired
 	private final CategoryService categoryService;
 
-	private Product _add(Product product) {
+	public Product add(Product product) {
 		// tạo ProductCode
 		if (product.getProductCode() == null || product.getProductCode().isEmpty()) {
 			String createCode = "PD_" + String.format("%05d", productRepo.count() + 1);
@@ -39,12 +39,12 @@ public class ProductService {
 		// tạo FinalPrice
 		if (product.isDiscount()) {
 			switch (product.getDiscountType()) {
-			case ConstDefined.NUMBER:
+			case MConst.NUMBER:
 				product.setFinalPrice(product.getPrice().subtract(product.getDiscountNumber()));
 				product.setDiscountPercent(BigDecimal.ZERO);
 				break;
 
-			case ConstDefined.PERCENT:
+			case MConst.PERCENT:
 				BigDecimal hundred = new BigDecimal(100);
 				BigDecimal discount = product.getPrice().multiply(product.getDiscountPercent());
 				BigDecimal discountHundred = discount.divide(hundred);
@@ -62,14 +62,12 @@ public class ProductService {
 		product.setCreateUser(commonService.getCurrentUser());
 		product.setUpdateDate(new Date());
 		product.setUpdateUser(commonService.getCurrentUser());
+		
+		// thêm mới Category nếu chưa tồn tại
+		addCategory(product.getCategory(), product.getCategory(), product.getType());
+		
 		log.info("Added new Product: {}", product.getProductName());
 		return productRepo.save(product);
-	}
-
-	public Product add(Product product) {
-		product = _add(product);
-		addCategory(product.getCategory(), product.getCategory(), product.getType());
-		return product;
 	}
 
 	private void addCategory(String key, String value, String type) {
@@ -82,6 +80,7 @@ public class ProductService {
 		try {
 			return productRepo.findAll();
 		} catch (Exception e) {
+			log.info("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -90,6 +89,7 @@ public class ProductService {
 		try {
 			return productRepo.findByTypeAndIsDeleted(type, isDelete);
 		} catch (Exception e) {
+			log.info("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -98,91 +98,64 @@ public class ProductService {
 		try {
 			return productRepo.findByIsDeleted(isDelete);
 		} catch (Exception e) {
+			log.info("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
 
 	public Product update(Product product) {
 		Product entity = findById(product.getId());
-		if (entity == null) {
-			entity = findByCode(product.getProductCode());
-		}
+		product.setCreateUser(entity.getCreateUser());
+		product.setCreateDate(entity.getCreateDate());
+		product.setUpdateDate(new Date());
+		product.setUpdateUser(commonService.getCurrentUser());
 
-		if (entity != null) {
-			product.setCreateUser(entity.getCreateUser());
-			product.setCreateDate(entity.getCreateDate());
-			product.setUpdateDate(new Date());
-			product.setUpdateUser(commonService.getCurrentUser());
-
-			// tạo FinalPrice
-			if (product.isDiscount()) {
-				switch (product.getDiscountType()) {
-				case ConstDefined.NUMBER:
-					product.setFinalPrice(product.getPrice().subtract(product.getDiscountNumber()));
-					product.setDiscountPercent(BigDecimal.ZERO);
-					break;
-
-				case ConstDefined.PERCENT:
-					BigDecimal hundred = new BigDecimal(100);
-					BigDecimal discount = product.getPrice().multiply(product.getDiscountPercent());
-					BigDecimal discountHundred = discount.divide(hundred);
-					product.setFinalPrice(product.getPrice().subtract(discountHundred));
-					product.setDiscountNumber(BigDecimal.ZERO);
-					break;
-				}
-			} else {
-				product.setFinalPrice(product.getPrice());
+		// tạo FinalPrice
+		if (product.isDiscount()) {
+			switch (product.getDiscountType()) {
+			case MConst.NUMBER:
+				product.setFinalPrice(product.getPrice().subtract(product.getDiscountNumber()));
 				product.setDiscountPercent(BigDecimal.ZERO);
+				break;
+
+			case MConst.PERCENT:
+				BigDecimal hundred = new BigDecimal(100);
+				BigDecimal discount = product.getPrice().multiply(product.getDiscountPercent());
+				BigDecimal discountHundred = discount.divide(hundred);
+				product.setFinalPrice(product.getPrice().subtract(discountHundred));
 				product.setDiscountNumber(BigDecimal.ZERO);
+				break;
 			}
-
-			// thêm mới Category nếu chưa tồn tại
-			addCategory(product.getCategory(), product.getCategory(), product.getType());
-
-			log.info("Updated a Product: {}", entity.getProductCode());
-			return productRepo.save(product);
 		} else {
-			throw new EntityNotFoundException("Product with id: " + product.getId() + " was not found!");
+			product.setFinalPrice(product.getPrice());
+			product.setDiscountPercent(BigDecimal.ZERO);
+			product.setDiscountNumber(BigDecimal.ZERO);
 		}
+
+		log.info("Updated a Product: {}", entity.getProductCode());
+		return productRepo.save(product);
 	}
 
 	public Product findById(Long id) {
-		try {
-			return productRepo.findById(id)
-					.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + "was not found!"));
-		} catch (Exception e) {
-			return null;
-		}
+		return productRepo.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + "was not found!"));
 	}
 
-	public Product findByCode(String code) {
-		try {
-			return productRepo.findByProductCode(code)
-					.orElseThrow(() -> new EntityNotFoundException("Product with code: " + code + "was not found!"));
-		} catch (Exception e) {
-			return null;
-		}
+	public Product findByProductCode(String code) {
+		return productRepo.findByProductCode(code)
+				.orElseThrow(() -> new EntityNotFoundException("Product with code: " + code + "was not found!"));
 	}
 
 	public void softDeleteById(Long id) {
 		Product entity = findById(id);
-		if (entity != null) {
-			entity.setUpdateDate(new Date());
-			entity.setUpdateUser("admin");
-			entity.setDeleted(true);
-			log.info("Soft delete a Product: {}", entity.getProductCode());
-			productRepo.save(entity);
-		} else {
-			throw new EntityNotFoundException("Product with id: " + id + " was not found!");
-		}
+		entity.setUpdateDate(new Date());
+		entity.setUpdateUser("admin");
+		entity.setDeleted(true);
+		log.info("Soft delete a Product: {}", entity.getProductCode());
+		productRepo.save(entity);
 	}
 
 	public void deleteById(Long id) {
-		Product entity = findById(id);
-		if (entity != null) {
-			productRepo.deleteById(id);
-		} else {
-			throw new EntityNotFoundException("Product with id: " + id + " was not found!");
-		}
+		productRepo.deleteById(id);
 	}
 }
