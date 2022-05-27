@@ -36,10 +36,8 @@ public class Order implements Serializable {
 	private Long id;
 	@Column(nullable = false, updatable = false)
 	private String orderCode;
-	private String note;
 	@Column(nullable = false)
 	private String userDisplayName;
-	private String userCode;
 	@Column(nullable = false, updatable = false)
 	private String payType;
 	@Column(nullable = false, updatable = false)
@@ -50,10 +48,16 @@ public class Order implements Serializable {
 	private String createUser;
 	@Column(nullable = false, updatable = false)
 	private Date createDate;
+	
+	private Date updateDate;
 	private BigDecimal totalAmount;
+	private String note;
+	private String cancelReasons;
+	private String updateUser;
 	private String orderStatus;
 	private int totalQty;
 	private boolean isPaid;
+	private boolean isCancel;
 	private boolean isCompleted;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

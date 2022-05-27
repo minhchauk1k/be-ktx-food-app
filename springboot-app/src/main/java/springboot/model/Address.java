@@ -31,11 +31,13 @@ public class Address implements Serializable {
 	private String area;
 	private String zone;
 	private String room;
+	private String type;
 
-	public Address(String area, String zone, String room) {
+	public Address(String area, String zone, String room, String type) {
 		super();
 		this.area = area;
 		this.zone = zone;
 		this.room = room;
+		this.type = type;
 	}
 }

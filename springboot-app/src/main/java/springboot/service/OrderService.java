@@ -29,6 +29,8 @@ public class OrderService {
 	private final OrderLotRepository lotRepo;
 	@Autowired
 	private final SystemParameterService parameterService;
+	@Autowired
+	private final CommonService commonService;
 
 	public Order add(Order order) {
 		if (order.getOrderCode() == null || order.getOrderCode().isEmpty()) {
@@ -39,9 +41,9 @@ public class OrderService {
 		for (OrderDetails detail : order.getDetails()) {
 			detail.setOrder(order);
 		}
-
+		
 		order.setCreateDate(new Date());
-		order.setCreateUser("admin");
+		order.setCreateUser(commonService.getCurrentUser());
 		log.info("Added new Order: {}", order.getOrderCode());
 		return orderRepo.save(order);
 	}
@@ -88,6 +90,8 @@ public class OrderService {
 	public Order updateStatusByIdAndStatus(Long id, String status) {
 		Order entity = findById(id);
 		entity.setOrderStatus(status);
+		entity.setUpdateUser(commonService.getCurrentUser());
+		entity.setUpdateDate(new Date());
 		log.info("Updated Order with Status: {} by id: {}", new Object[] { entity.getOrderStatus(), id });
 		return orderRepo.save(entity);
 	}

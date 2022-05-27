@@ -69,6 +69,10 @@ public class UserService implements UserDetailsService {
 		log.info("Added new User: {}", user.getUserName());
 		return userRepo.save(user);
 	}
+	
+	public boolean checkExistByUserName(String userName) {
+		return userRepo.existsByUserName(userName);
+	}
 
 	public User updateUser(User user) {
 		user.setUpdateDate(new Date());
@@ -89,7 +93,7 @@ public class UserService implements UserDetailsService {
 		User entity = findById(id);
 		entity.setUpdateDate(new Date());
 		entity.setUpdateUser("admin");
-		entity.setDeleted(true);
+		entity.setBlocked(true);
 		userRepo.save(entity);
 	}
 

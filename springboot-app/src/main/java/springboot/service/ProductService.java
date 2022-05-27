@@ -60,12 +60,10 @@ public class ProductService {
 
 		product.setCreateDate(new Date());
 		product.setCreateUser(commonService.getCurrentUser());
-		product.setUpdateDate(new Date());
-		product.setUpdateUser(commonService.getCurrentUser());
-		
+
 		// thêm mới Category nếu chưa tồn tại
 		addCategory(product.getCategory(), product.getCategory(), product.getType());
-		
+
 		log.info("Added new Product: {}", product.getProductName());
 		return productRepo.save(product);
 	}

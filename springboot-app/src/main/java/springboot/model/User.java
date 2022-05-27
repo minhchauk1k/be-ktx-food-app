@@ -40,16 +40,18 @@ public class User implements Serializable {
 	private String userName;
 	@Column(nullable = false, updatable = false)
 	private String password;
+	@Column(nullable = false)
 	private String phoneNumber;
 	private String email;
-	private String address;
 	private String urlAvatar;
-	private boolean isDeleted;
-	private boolean isActive;
+	private boolean isBlocked;
 	private Date lastLoginDate;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Role> roles = new ArrayList<>();
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	private List<Address> addresses = new ArrayList<>();
 
 	@Column(nullable = false, updatable = false)
 	private String createUser;

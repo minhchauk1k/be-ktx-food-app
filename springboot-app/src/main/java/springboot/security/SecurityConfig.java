@@ -80,6 +80,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// xử lý với user
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/current/**").hasAuthority(MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/all/**").hasAuthority(MConst.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/user/add/**").permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/user/exist/**").permitAll();
 		
 		// xử lý với product
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/all/**").permitAll();

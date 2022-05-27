@@ -50,6 +50,12 @@ public class UserController {
 		User newUser = userService.add(user);
 		return new ResponseEntity<>(newUser, HttpStatus.CREATED);
 	}
+	
+	@PostMapping("/exist/userName")
+	public ResponseEntity<Boolean> checkExistByUserName(@RequestBody String userName) {
+		boolean isExist = userService.checkExistByUserName(userName);
+		return new ResponseEntity<>(isExist, HttpStatus.CREATED);
+	}
 
 	@PutMapping("/update")
 	public ResponseEntity<User> update(@RequestBody User user) {
