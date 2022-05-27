@@ -51,7 +51,7 @@ public class OrderController {
 		List<Order> orders = orderService.getOrdersJustRepaired();
 		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/all/just/delivered")
 	public ResponseEntity<List<Order>> getOrdersJustDelivered() {
 		List<Order> orders = orderService.getOrdersJustDelivered();
@@ -64,25 +64,25 @@ public class OrderController {
 		Order updatedOrder = orderService.updateStatusByIdAndStatus(id, status);
 		return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
 	}
-	
+
 	@PutMapping("update/delivery")
 	public ResponseEntity<Order> deliveryOrders(@RequestBody List<Long> idList) {
 		orderService.deliveryOrders(idList);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@PutMapping("update/complete")
 	public ResponseEntity<Order> completeOrders(@RequestBody List<Long> idList) {
 		orderService.completeOrders(idList);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/lot/all")
 	public ResponseEntity<List<OrderLot>> getOrderLots() {
 		List<OrderLot> orders = lotService.getOrderLots();
 		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/lot/all/incompleted")
 	public ResponseEntity<List<OrderLot>> getOrderLotsIncompleted() {
 		List<OrderLot> orders = lotService.getOrderLotsIncompleted();

@@ -19,7 +19,7 @@ import springboot.repository.CategoryRepository;
 @Transactional
 public class CategoryService {
 	@Autowired
-	private CategoryRepository categoryRepo;
+	private final CategoryRepository categoryRepo;
 
 	public Category add(Category category) {
 		log.info("Added new Category: {} with Type: {}",

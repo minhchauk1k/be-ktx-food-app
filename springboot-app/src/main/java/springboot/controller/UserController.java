@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import springboot.model.User;
+import springboot.service.CommonService;
 import springboot.service.UserService;
 
 @RestController
@@ -24,11 +25,18 @@ import springboot.service.UserService;
 public class UserController {
 	@Autowired
 	private final UserService userService;
+	@Autowired
+	private final CommonService commonService;
 
 	@GetMapping("/all")
 	public ResponseEntity<List<User>> getUsers() {
 		List<User> users = userService.getUsers();
 		return new ResponseEntity<>(users, HttpStatus.OK);
+	}
+	@GetMapping("/current")
+	public ResponseEntity<User> getMyInfo() {
+		User user = userService.findByUserName(commonService.getCurrentUser());
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@GetMapping("/find/{id}")

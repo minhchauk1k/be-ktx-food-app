@@ -54,12 +54,12 @@ public class SpringbootApplication {
 			// tạo user mặc định ADMIN
 			if (userService.getUsers().size() == 0) {
 				User user = new User();
-				user.setUsername("admin");
+				user.setUserName("admin");
 				user.setPassword("admin123");
 				user.setCreateDate(new Date());
 				user.setCreateUser("admin");
 				userService.add(user);
-				userService.addRoleToUser(user.getUsername(), MConst.ROLE_ADMIN);
+				userService.addRoleToUser(user.getUserName(), MConst.ROLE_ADMIN);
 			}
 
 			// tạo SystemParameter table

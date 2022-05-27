@@ -17,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,10 +33,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import springboot.enums.MConst;
+import springboot.model.Address;
 import springboot.model.Category;
 import springboot.model.Role;
 import springboot.model.SystemParameter;
 import springboot.model.User;
+import springboot.service.AddressService;
 import springboot.service.CategoryService;
 import springboot.service.SystemParameterService;
 import springboot.service.UserService;
@@ -50,6 +54,20 @@ public class CommonController {
 	private final CategoryService categoryService;
 	@Autowired
 	private final UserService userService;
+	@Autowired
+	private final AddressService addressService;
+
+	@GetMapping("address/all")
+	public ResponseEntity<List<Address>> getAddresses() {
+		List<Address> addresses = addressService.getAddresses();
+		return new ResponseEntity<>(addresses, HttpStatus.OK);
+	}
+	
+	@PostMapping("address/add")
+	public ResponseEntity<Address> add(@RequestBody Address address) {
+		Address newAddress = addressService.add(address);
+		return new ResponseEntity<>(newAddress, HttpStatus.CREATED);
+	}
 
 	@GetMapping("/parameter/{key}")
 	public ResponseEntity<SystemParameter> getParameter(@PathVariable("key") String key) {
@@ -63,13 +81,13 @@ public class CommonController {
 		return new ResponseEntity<>(params, HttpStatus.OK);
 	}
 
-	@GetMapping("/categorys/{type}")
+	@GetMapping("/category/{type}")
 	public ResponseEntity<List<Category>> getCategorys(@PathVariable("type") String type) {
 		List<Category> categories = categoryService.getByType(type);
 		return new ResponseEntity<>(categories, HttpStatus.OK);
 	}
-	
-	@GetMapping("/categorys")
+
+	@GetMapping("/category/all")
 	public ResponseEntity<List<Category>> getCategorys() {
 		List<Category> categories = categoryService.getCategories();
 		return new ResponseEntity<>(categories, HttpStatus.OK);
@@ -86,8 +104,8 @@ public class CommonController {
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refreshToken);
 				String username = decodedJWT.getSubject();
-				User user = userService.findByUsername(username);
-				String accessToken = JWT.create().withSubject(user.getUsername())
+				User user = userService.findByUserName(username);
+				String accessToken = JWT.create().withSubject(user.getUserName())
 						.withExpiresAt(new Date(System.currentTimeMillis() + MConst.WEEK))
 						.withIssuer(request.getRequestURL().toString()).withClaim("roles", getRoleList(user))
 						.sign(algorithm);

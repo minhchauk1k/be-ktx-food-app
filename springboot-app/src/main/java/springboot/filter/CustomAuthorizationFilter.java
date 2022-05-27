@@ -41,43 +41,35 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		switch (request.getServletPath()) {
-		case "/login":
-//		case "/order/add":
-			filterChain.doFilter(request, response);
-			break;
-		default:
-			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-			if (authorizationHeader != null && authorizationHeader.startsWith(MConst.BEARER)) {
-				// authorizationHeader != null
-				try {
-					String token = authorizationHeader.substring(MConst.BEARER.length());
-					Algorithm algorithm = commonService.getAlgorithm();
-					JWTVerifier verifier = JWT.require(algorithm).build();
-					DecodedJWT decodedJWT = verifier.verify(token);
-					String username = decodedJWT.getSubject();
+		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+		if (authorizationHeader != null && authorizationHeader.startsWith(MConst.BEARER)) {
+			// authorizationHeader != null
+			try {
+				String token = authorizationHeader.substring(MConst.BEARER.length());
+				Algorithm algorithm = commonService.getAlgorithm();
+				JWTVerifier verifier = JWT.require(algorithm).build();
+				DecodedJWT decodedJWT = verifier.verify(token);
+				String username = decodedJWT.getSubject();
 
-					UsernamePasswordAuthenticationToken authenToken = new UsernamePasswordAuthenticationToken(username,
-							null, getAuthorities(decodedJWT));
-					SecurityContextHolder.getContext().setAuthentication(authenToken);
-					filterChain.doFilter(request, response);
-				} catch (Exception e) {
-					log.error(e.getMessage());
-
-					response.setStatus(HttpStatus.FORBIDDEN.value());
-					response.setHeader("error", e.getMessage());
-
-					Map<String, String> error = new HashMap<>();
-					error.put("error_message", e.getMessage());
-
-					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-					new ObjectMapper().writeValue(response.getOutputStream(), error);
-				}
-			} else {
-				// authorizationHeader = null
+				UsernamePasswordAuthenticationToken authenToken = new UsernamePasswordAuthenticationToken(username,
+						null, getAuthorities(decodedJWT));
+				SecurityContextHolder.getContext().setAuthentication(authenToken);
 				filterChain.doFilter(request, response);
+			} catch (Exception e) {
+				log.error(e.getMessage());
+
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				response.setHeader("error", e.getMessage());
+
+				Map<String, String> error = new HashMap<>();
+				error.put("error_message", e.getMessage());
+
+				response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+				new ObjectMapper().writeValue(response.getOutputStream(), error);
 			}
-			break;
+		} else {
+			// authorizationHeader = null
+			filterChain.doFilter(request, response);
 		}
 	}
 

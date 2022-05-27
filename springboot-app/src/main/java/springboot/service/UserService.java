@@ -35,16 +35,21 @@ public class UserService implements UserDetailsService {
 	private final PasswordEncoder pwEncoder;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = findByUsername(username);
+	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+		User user = findByUserName(userName);
 		if (user == null) {
-			throw new UsernameNotFoundException("Username: " + username + " is not exist in DB!");
+			throw new UsernameNotFoundException("Username: " + userName + " is not exist in DB!");
 		}
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		user.getRoles().forEach(role -> {
 			authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 		});
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+
+		// cập nhật lần login cuối
+		user.setLastLoginDate(new Date());
+		userRepo.save(user);
+
+		return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
 				authorities);
 	}
 
@@ -56,19 +61,19 @@ public class UserService implements UserDetailsService {
 		user.setPassword(pwEncoder.encode(user.getPassword()));
 		user.setCreateDate(new Date());
 		user.setCreateUser(commonService.getCurrentUser());
-		
+
 		// thêm role mặc định
 		Role role = roleService.findByRoleName(MConst.ROLE_USER);
 		user.getRoles().add(role);
-		
-		log.info("Added new User: {}", user.getUsername());
+
+		log.info("Added new User: {}", user.getUserName());
 		return userRepo.save(user);
 	}
 
 	public User updateUser(User user) {
 		user.setUpdateDate(new Date());
 		user.setUpdateUser(commonService.getCurrentUser());
-		log.info("Updated user: {} by {}", new Object[] { user.getUsername(), commonService.getCurrentUser() });
+		log.info("Updated user: {} by {}", new Object[] { user.getUserName(), commonService.getCurrentUser() });
 		return userRepo.save(user);
 	}
 
@@ -97,15 +102,15 @@ public class UserService implements UserDetailsService {
 				.orElseThrow(() -> new EntityNotFoundException("User with id: " + id + " was not found!"));
 	}
 
-	public User findByUsername(String name) {
-		return userRepo.findByUsername(name)
+	public User findByUserName(String name) {
+		return userRepo.findByUserName(name)
 				.orElseThrow(() -> new EntityNotFoundException("User with username: " + name + " was not found!"));
 	}
 
 	public void addRoleToUser(String username, String rolename) {
-		User user = findByUsername(username);
+		User user = findByUserName(username);
 		Role role = roleService.findByRoleName(rolename);
-		log.info("Add role: {} cho User: {}", new Object[] { role.getRoleName(), user.getUsername() });
+		log.info("Add role: {} cho User: {}", new Object[] { role.getRoleName(), user.getUserName() });
 		user.getRoles().add(role);
 	}
 

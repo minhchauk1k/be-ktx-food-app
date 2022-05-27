@@ -37,12 +37,12 @@ public class User implements Serializable {
 	@Column(nullable = false, updatable = false)
 	private String userCode;
 	@Column(nullable = false, updatable = false)
-	private String username;
+	private String userName;
 	@Column(nullable = false, updatable = false)
 	private String password;
 	private String phoneNumber;
 	private String email;
-	private String addresss;
+	private String address;
 	private String urlAvatar;
 	private boolean isDeleted;
 	private boolean isActive;
