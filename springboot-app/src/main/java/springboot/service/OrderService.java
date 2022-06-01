@@ -41,7 +41,7 @@ public class OrderService {
 		for (OrderDetails detail : order.getDetails()) {
 			detail.setOrder(order);
 		}
-		
+
 		order.setCreateDate(new Date());
 		order.setCreateUser(commonService.getCurrentUser());
 		log.info("Added new Order: {}", order.getOrderCode());
@@ -52,7 +52,7 @@ public class OrderService {
 		try {
 			return orderRepo.findAll();
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -64,7 +64,7 @@ public class OrderService {
 			list.add(MConst.WAITFORPAY);
 			return orderRepo.findByOrderStatusInAndIsCompleted(list, false);
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -73,7 +73,7 @@ public class OrderService {
 		try {
 			return orderRepo.findByOrderStatusAndIsCompleted(MConst.PREPARING, false);
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -82,7 +82,7 @@ public class OrderService {
 		try {
 			return orderRepo.findByOrderStatusAndIsCompleted(MConst.DELIVERY, false);
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -96,7 +96,7 @@ public class OrderService {
 		return orderRepo.save(entity);
 	}
 
-	public void deliveryOrders(List<Long> idList) {
+	public OrderLot deliveryOrders(List<Long> idList) {
 		boolean isLotControl = parameterService.getIsLotControl();
 
 		if (isLotControl) {
@@ -108,15 +108,21 @@ public class OrderService {
 			for (Long id : idList) {
 				Order entity = findById(id);
 				entity.setOrderStatus(MConst.DELIVERY);
+				entity.setUpdateUser(commonService.getCurrentUser());
+				entity.setUpdateDate(new Date());
 				orderLot.getDetails().add(orderRepo.save(entity));
 			}
 			// lưu lại lô vừa tạo
-			lotRepo.save(orderLot);
+			orderLot.setCreateUser(commonService.getCurrentUser());
+			orderLot.setCreateDate(new Date());
+			log.info("Updated Orders with Status: {} by id: {}", new Object[] { MConst.DELIVERY, idList });
+			return lotRepo.save(orderLot);
 		} else {
 			// cập nhật Status cho từng đơn hàng theo Id
 			updateOrderStatusByListIdAndValue(idList, MConst.DELIVERY);
+			log.info("Updated Orders with Status: {} by id: {}", new Object[] { MConst.DELIVERY, idList });
+			return null;
 		}
-		log.info("Updated Orders with Status: {} by id: {}", new Object[] { MConst.DELIVERY, idList });
 	}
 
 	public void completeOrders(List<Long> idList) {
@@ -129,7 +135,7 @@ public class OrderService {
 		if (!isLotControl) {
 			return;
 		}
-		
+
 		// tạo list Order từ các id lẻ tẻ
 		List<Order> orderList = new ArrayList<>();
 		idList.forEach(val -> {
@@ -138,22 +144,24 @@ public class OrderService {
 
 		// tìm các lot theo order lẻ tẻ
 		List<OrderLot> lotList = lotRepo.findByDetailsIn(orderList);
-		
-		for (OrderLot lot: lotList) {
+
+		for (OrderLot lot : lotList) {
 			if (lot.isCompleted()) {
 				return;
 			}
-			
+
 			boolean isCompleted = true;
-			for (Order order: lot.getDetails()) {
+			for (Order order : lot.getDetails()) {
 				if (!order.isCompleted()) {
 					isCompleted = false;
 					return;
 				}
 			}
-			
+
 			if (isCompleted) {
 				lot.setCompleted(isCompleted);
+				lot.setUpdateUser(commonService.getCurrentUser());
+				lot.setUpdateDate(new Date());
 				lotRepo.save(lot);
 				log.info("Lot: {} status is: {}", new Object[] { lot.getLotCode(), MConst.COMPLETED });
 			}
@@ -170,6 +178,8 @@ public class OrderService {
 				entity.setOrderStatus(value);
 			}
 			entity.setOrderStatus(value);
+			entity.setUpdateUser(commonService.getCurrentUser());
+			entity.setUpdateDate(new Date());
 			orderRepo.save(entity);
 		}
 

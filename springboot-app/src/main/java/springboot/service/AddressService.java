@@ -24,13 +24,23 @@ public class AddressService {
 		try {
 			return addressRepo.findAll();
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
-	
+
+	public List<Address> getByType(String type) {
+		try {
+			return addressRepo.findByType(type);
+		} catch (Exception e) {
+			log.error("Error: {}", e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+
 	public Address add(Address address) {
-		log.info("Added new Address: {}", address.getArea() + ", " + address.getZone());
+		log.info("Added new Address: {} with Type: {}",
+				new Object[] { address.getArea() + ", " + address.getZone(), address.getType() });
 		return addressRepo.save(address);
 	}
 

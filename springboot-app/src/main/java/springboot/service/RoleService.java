@@ -36,7 +36,6 @@ public class RoleService {
 	}
 
 	public Role findByRoleName(String name) {
-
 		return roleRepo.findByRoleName(name)
 				.orElseThrow(() -> new EntityNotFoundException("Role by name " + name + " was not found!"));
 	}
@@ -45,7 +44,7 @@ public class RoleService {
 		try {
 			return roleRepo.findAll();
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}

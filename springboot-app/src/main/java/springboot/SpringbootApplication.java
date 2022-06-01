@@ -37,8 +37,8 @@ public class SpringbootApplication {
 			// tạo Role table
 			if (roleService.getRoles().size() == 0) {
 				roleService.add(new Role(MConst.ROLE_ADMIN));
-				roleService.add(new Role(MConst.ROLE_MANAGER));
 				roleService.add(new Role(MConst.ROLE_OWNER));
+				roleService.add(new Role(MConst.ROLE_MANAGER));
 				roleService.add(new Role(MConst.ROLE_STAFF));
 				roleService.add(new Role(MConst.ROLE_USER));
 			}

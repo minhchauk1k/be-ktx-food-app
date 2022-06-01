@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -40,7 +41,6 @@ public class User implements Serializable {
 	private String userName;
 	@Column(nullable = false, updatable = false)
 	private String password;
-	@Column(nullable = false)
 	private String phoneNumber;
 	private String email;
 	private String urlAvatar;
@@ -50,7 +50,7 @@ public class User implements Serializable {
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Role> roles = new ArrayList<>();
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<Address> addresses = new ArrayList<>();
 
 	@Column(nullable = false, updatable = false)

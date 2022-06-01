@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				authenticationManagerBean(), commonService);
 		// check for login
 		customAuthenticationFilter.setFilterProcessesUrl("/login");
-		
+
 		// disable login
 		http.csrf().disable();
 
@@ -60,29 +60,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// custom access
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/login").permitAll();
-		
+
 		// xử lý với common
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/common/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/common/**").hasAuthority(MConst.ROLE_ADMIN);
 		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/common/**").hasAuthority(MConst.ROLE_ADMIN);
-		
+
 		// xử lý với order
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/all/**").hasAuthority(MConst.ROLE_ADMIN);
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/order/add/**").hasAnyAuthority(MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/order/update/**").hasAuthority(MConst.ROLE_ADMIN);
-		
+
 		// xử lý với role
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/role/all/**").hasAuthority(MConst.ROLE_ADMIN);
-		
+
 		// xử lý với orderLot
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/lot/**").hasAuthority(MConst.ROLE_ADMIN);
-		
+
 		// xử lý với user
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/current/**").hasAuthority(MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/all/**").hasAuthority(MConst.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/user/update/**").hasAnyAuthority(MConst.ROLE_USER,
+				MConst.ROLE_ADMIN);
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/user/add/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/user/exist/**").permitAll();
-		
+
 		// xử lý với product
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/all/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/add/**").hasAuthority(MConst.ROLE_ADMIN);

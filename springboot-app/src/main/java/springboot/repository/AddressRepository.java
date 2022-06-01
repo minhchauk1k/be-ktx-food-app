@@ -14,9 +14,11 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 
 	void deleteById(Long id);
 
-	List<Address> findByArea(String Area);
+	List<Address> findByArea(String area);
 
-	List<Address> findByZone(String Area);
+	List<Address> findByZone(String zone);
 
-	List<Address> findByRoom(String Area);
+	List<Address> findByRoom(String room);
+	
+	List<Address> findByType(String type);
 }

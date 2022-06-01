@@ -78,7 +78,7 @@ public class ProductService {
 		try {
 			return productRepo.findAll();
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -87,7 +87,7 @@ public class ProductService {
 		try {
 			return productRepo.findByTypeAndIsDeleted(type, isDelete);
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -96,7 +96,7 @@ public class ProductService {
 		try {
 			return productRepo.findByIsDeleted(isDelete);
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -147,7 +147,7 @@ public class ProductService {
 	public void softDeleteById(Long id) {
 		Product entity = findById(id);
 		entity.setUpdateDate(new Date());
-		entity.setUpdateUser("admin");
+		entity.setUpdateUser(commonService.getCurrentUser());
 		entity.setDeleted(true);
 		log.info("Soft delete a Product: {}", entity.getProductCode());
 		productRepo.save(entity);

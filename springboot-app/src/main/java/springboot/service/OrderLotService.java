@@ -24,7 +24,7 @@ public class OrderLotService {
 		try {
 			return lotRepo.findAll();
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -33,7 +33,7 @@ public class OrderLotService {
 		try {
 			return lotRepo.findByIsCompleted(false);
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -42,7 +42,7 @@ public class OrderLotService {
 		try {
 			return lotRepo.findByIsCompleted(false);
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}

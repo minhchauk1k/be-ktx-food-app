@@ -19,6 +19,7 @@ import springboot.enums.MConst;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Role;
 import springboot.model.User;
+import springboot.repository.AddressRepository;
 import springboot.repository.UserRepository;
 
 @Service
@@ -32,6 +33,10 @@ public class UserService implements UserDetailsService {
 	private final RoleService roleService;
 	@Autowired
 	private final CommonService commonService;
+	@Autowired
+	private final AddressService addressService;
+	@Autowired
+	private final AddressRepository addressRepo;
 	private final PasswordEncoder pwEncoder;
 
 	@Override
@@ -62,6 +67,11 @@ public class UserService implements UserDetailsService {
 		user.setCreateDate(new Date());
 		user.setCreateUser(commonService.getCurrentUser());
 
+		// thêm địa chỉ
+		if (user.getAddresses().size() == 1) {
+			addressService.add(user.getAddresses().get(0));
+		}
+
 		// thêm role mặc định
 		Role role = roleService.findByRoleName(MConst.ROLE_USER);
 		user.getRoles().add(role);
@@ -69,7 +79,7 @@ public class UserService implements UserDetailsService {
 		log.info("Added new User: {}", user.getUserName());
 		return userRepo.save(user);
 	}
-	
+
 	public boolean checkExistByUserName(String userName) {
 		return userRepo.existsByUserName(userName);
 	}
@@ -77,7 +87,8 @@ public class UserService implements UserDetailsService {
 	public User updateUser(User user) {
 		user.setUpdateDate(new Date());
 		user.setUpdateUser(commonService.getCurrentUser());
-		log.info("Updated user: {} by {}", new Object[] { user.getUserName(), commonService.getCurrentUser() });
+		addressRepo.saveAll(user.getAddresses());
+		log.info("Updated User: {} by {}", new Object[] { user.getUserName(), commonService.getCurrentUser() });
 		return userRepo.save(user);
 	}
 
@@ -85,6 +96,7 @@ public class UserService implements UserDetailsService {
 		try {
 			return userRepo.findAll();
 		} catch (Exception e) {
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -92,7 +104,7 @@ public class UserService implements UserDetailsService {
 	public void softDeleteById(Long id) {
 		User entity = findById(id);
 		entity.setUpdateDate(new Date());
-		entity.setUpdateUser("admin");
+		entity.setUpdateUser(commonService.getCurrentUser());
 		entity.setBlocked(true);
 		userRepo.save(entity);
 	}
@@ -114,7 +126,7 @@ public class UserService implements UserDetailsService {
 	public void addRoleToUser(String username, String rolename) {
 		User user = findByUserName(username);
 		Role role = roleService.findByRoleName(rolename);
-		log.info("Add role: {} cho User: {}", new Object[] { role.getRoleName(), user.getUserName() });
+		log.info("Added role: {} for User: {}", new Object[] { role.getRoleName(), user.getUserName() });
 		user.getRoles().add(role);
 	}
 

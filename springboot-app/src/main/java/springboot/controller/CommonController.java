@@ -63,6 +63,12 @@ public class CommonController {
 		return new ResponseEntity<>(addresses, HttpStatus.OK);
 	}
 	
+	@GetMapping("address/all/type={type}")
+	public ResponseEntity<List<Address>> getByType(@PathVariable("type") String type) {
+		List<Address> addresses = addressService.getByType(type);
+		return new ResponseEntity<>(addresses, HttpStatus.OK);
+	}
+	
 	@PostMapping("address/add")
 	public ResponseEntity<Address> add(@RequestBody Address address) {
 		Address newAddress = addressService.add(address);

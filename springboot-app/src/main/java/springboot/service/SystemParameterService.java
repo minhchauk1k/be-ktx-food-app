@@ -26,12 +26,13 @@ public class SystemParameterService {
 		try {
 			return paramRepo.findAll();
 		} catch (Exception e) {
-			log.info("Error: {}", e.getMessage());
+			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
 
 	public SystemParameter addParameter(SystemParameter param) {
+		log.info("Added new Parameter: {}", param.getParameterKey());
 		return paramRepo.save(param);
 	}
 

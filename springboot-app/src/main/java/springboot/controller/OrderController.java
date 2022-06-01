@@ -66,9 +66,9 @@ public class OrderController {
 	}
 
 	@PutMapping("update/delivery")
-	public ResponseEntity<Order> deliveryOrders(@RequestBody List<Long> idList) {
-		orderService.deliveryOrders(idList);
-		return new ResponseEntity<>(HttpStatus.OK);
+	public ResponseEntity<OrderLot> deliveryOrders(@RequestBody List<Long> idList) {
+		OrderLot lot = orderService.deliveryOrders(idList);
+		return new ResponseEntity<>(lot, HttpStatus.OK);
 	}
 
 	@PutMapping("update/complete")
