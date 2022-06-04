@@ -67,7 +67,7 @@ public class SpringbootApplication {
 				paramService.addParameter(new SystemParameter(MConst.SERECT_KEY, "minchu"));
 				paramService.addParameter(new SystemParameter(MConst.OPEN_TIME, "10"));
 				paramService.addParameter(new SystemParameter(MConst.CLOSE_TIME, "20"));
-				paramService.addParameter(new SystemParameter(MConst.LOT_CONTROL, MConst.YES));
+				paramService.addParameter(new SystemParameter(MConst.LOT_CONTROL, MConst.NO));
 			}
 		};
 	}

@@ -49,7 +49,7 @@ public class User implements Serializable {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Role> roles = new ArrayList<>();
-	
+
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<Address> addresses = new ArrayList<>();
 

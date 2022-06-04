@@ -40,6 +40,13 @@ public class OrderController {
 		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
 
+	@GetMapping("/all/user/status={status}&dateFrom={dateFrom}&dateTo={dateTo}")
+	public ResponseEntity<List<Order>> getOrdersOfUser(@PathVariable("status") String status,
+			@PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
+		List<Order> orders = orderService.getOrdersOfUser(status, dateFrom, dateTo);
+		return new ResponseEntity<>(orders, HttpStatus.OK);
+	}
+
 	@GetMapping("/all/just/paid")
 	public ResponseEntity<List<Order>> getOrdersJustPaid() {
 		List<Order> orders = orderService.getOrdersJustPaid();
@@ -87,5 +94,17 @@ public class OrderController {
 	public ResponseEntity<List<OrderLot>> getOrderLotsIncompleted() {
 		List<OrderLot> orders = lotService.getOrderLotsIncompleted();
 		return new ResponseEntity<>(orders, HttpStatus.OK);
+	}
+
+	@GetMapping("/lot/all/just/repaired")
+	public ResponseEntity<List<OrderLot>> getOrderLotsJustRepaired() {
+		List<OrderLot> orders = lotService.getOrderLotsJustRepaired();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
+	}
+
+	@PostMapping("/lot/add")
+	public ResponseEntity<OrderLot> add(@RequestBody OrderLot orderLot) {
+		OrderLot newLot = lotService.add(orderLot);
+		return new ResponseEntity<>(newLot, HttpStatus.CREATED);
 	}
 }

@@ -67,6 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/common/**").hasAuthority(MConst.ROLE_ADMIN);
 
 		// xử lý với order
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/all/user/**").hasAuthority(MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/all/**").hasAuthority(MConst.ROLE_ADMIN);
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/order/add/**").hasAnyAuthority(MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/order/update/**").hasAuthority(MConst.ROLE_ADMIN);
@@ -75,9 +76,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/role/all/**").hasAuthority(MConst.ROLE_ADMIN);
 
 		// xử lý với orderLot
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/lot/**").hasAuthority(MConst.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/lot/all/**").hasAuthority(MConst.ROLE_ADMIN);
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/order/lot/add/**").hasAnyAuthority(MConst.ROLE_ADMIN);
 
 		// xử lý với user
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/find/fullname/**").hasAuthority(MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/current/**").hasAuthority(MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/all/**").hasAuthority(MConst.ROLE_ADMIN);
 		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/user/update/**").hasAnyAuthority(MConst.ROLE_USER,

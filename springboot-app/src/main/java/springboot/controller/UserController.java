@@ -33,6 +33,15 @@ public class UserController {
 		List<User> users = userService.getUsers();
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
+
+	@GetMapping("/find/fullname/username={userName}")
+	public ResponseEntity<User> getUsersFullName(@PathVariable("userName") String userName) {
+		String fullName = userService.findByUserName(userName).getDisplayName();
+		User user = new User();
+		user.setDisplayName(fullName);
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+
 	@GetMapping("/current")
 	public ResponseEntity<User> getMyInfo() {
 		User user = userService.findByUserName(commonService.getCurrentUser());
@@ -50,7 +59,7 @@ public class UserController {
 		User newUser = userService.add(user);
 		return new ResponseEntity<>(newUser, HttpStatus.CREATED);
 	}
-	
+
 	@PostMapping("/exist/userName")
 	public ResponseEntity<Boolean> checkExistByUserName(@RequestBody String userName) {
 		boolean isExist = userService.checkExistByUserName(userName);

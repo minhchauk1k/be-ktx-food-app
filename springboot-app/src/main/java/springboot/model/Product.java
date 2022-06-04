@@ -46,8 +46,7 @@ public class Product implements Serializable {
 	private String discountType;
 	private boolean isDeleted;
 	private boolean isDiscount;
-	private Date discountFromDate;
-	private Date discountToDate;
+	private boolean isInventory;
 	@Column(nullable = false, updatable = false)
 	private String createUser;
 	private String updateUser;

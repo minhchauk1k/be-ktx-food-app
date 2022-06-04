@@ -48,7 +48,7 @@ public class Order implements Serializable {
 	private String createUser;
 	@Column(nullable = false, updatable = false)
 	private Date createDate;
-	
+
 	private Date updateDate;
 	private BigDecimal totalAmount;
 	private String note;

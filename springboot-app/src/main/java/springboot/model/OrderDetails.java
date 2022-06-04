@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -32,15 +31,12 @@ public class OrderDetails implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
-	
-	// cái này để tránh gây null cho orderId, ko cần trả về cho json
+
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(nullable = false, updatable = false)
 	private Order order;
 
 	@ManyToOne
-	@JoinColumn(nullable = false, updatable = false)
 	private Product product;
 
 	@Column(nullable = false, updatable = false)

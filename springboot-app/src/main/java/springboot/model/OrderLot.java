@@ -36,16 +36,18 @@ public class OrderLot implements Serializable {
 
 	@Column(nullable = false, updatable = false)
 	private String lotCode;
-	
+	private String lotName;
+	private String lotStatus;
+
 	@Column(nullable = false, updatable = false)
 	private String createUser;
 	private String updateUser;
 	@Column(nullable = false, updatable = false)
 	private Date createDate;
 	private Date updateDate;
-	
+
 	private boolean isCompleted;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.MERGE, orphanRemoval = true)
 	private List<Order> details = new ArrayList<>();
 }

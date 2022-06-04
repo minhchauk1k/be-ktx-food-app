@@ -16,6 +16,8 @@ public interface OrderLotRepository extends JpaRepository<OrderLot, Long> {
 	void deleteById(Long id);
 
 	List<OrderLot> findByIsCompleted(boolean isCompleted);
+	
+	List<OrderLot> findByLotStatus(String status);
 
 	List<OrderLot> findByDetailsIn(List<Order> orderList);
 }

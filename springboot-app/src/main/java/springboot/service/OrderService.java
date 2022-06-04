@@ -1,6 +1,10 @@
 package springboot.service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +36,8 @@ public class OrderService {
 	@Autowired
 	private final CommonService commonService;
 
+	private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 	public Order add(Order order) {
 		if (order.getOrderCode() == null || order.getOrderCode().isEmpty()) {
 			String createCode = "ODR_" + String.format("%05d", orderRepo.count() + 1);
@@ -57,16 +63,45 @@ public class OrderService {
 		}
 	}
 
+	public List<Order> getOrdersOfUser(String status, String dateFrom, String dateTo) {
+		try {
+			String user = commonService.getCurrentUser();
+			Date dateFromD = new SimpleDateFormat("dd-MM-yyyy").parse(dateFrom);
+			Date dateToD = new SimpleDateFormat("dd-MM-yyyy").parse(dateTo);
+
+			// increase 1 day
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(dateToD);
+			calendar.add(Calendar.DATE, 1);
+			dateToD = calendar.getTime();
+
+			if (status.isEmpty()) {
+				return orderRepo.findByCreateUserAndCreateDateBetween(user, dateFromD, dateToD);
+			}
+			return orderRepo.findByCreateUserAndOrderStatusAndCreateDateBetween(user, status, dateFromD, dateToD);
+		} catch (Exception e) {
+			log.error("Error: {}", e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+
 	public List<Order> getOrdersJustPaid() {
 		try {
 			List<String> list = new ArrayList<>();
 			list.add(MConst.PAID);
 			list.add(MConst.WAITFORPAY);
-			return orderRepo.findByOrderStatusInAndIsCompleted(list, false);
+//			return orderRepo.findByOrderStatusInAndIsCompleted(list, false);
+			return orderRepo.findByCreateDateGreaterThanEqual(getToday());
 		} catch (Exception e) {
 			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
+	}
+
+	private Date getToday() throws ParseException {
+		String todayStr = dateFormat.format(new Date());
+		Date today = dateFormat.parse(todayStr);
+		return today;
 	}
 
 	public List<Order> getOrdersJustRepaired() {
