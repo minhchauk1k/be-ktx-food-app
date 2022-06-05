@@ -41,6 +41,14 @@ public class UserController {
 		user.setDisplayName(fullName);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
+	
+	@GetMapping("/find/userName={userName}")
+	public ResponseEntity<User> getUserByUsername(@PathVariable("userName") String userName) {
+		User user = userService.findByUserName(userName);
+		User userBlock = new User();
+		userBlock.setBlocked(user.isBlocked());
+		return new ResponseEntity<>(userBlock, HttpStatus.OK);
+	}
 
 	@GetMapping("/current")
 	public ResponseEntity<User> getMyInfo() {

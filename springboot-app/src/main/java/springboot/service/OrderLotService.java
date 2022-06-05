@@ -1,5 +1,8 @@
 package springboot.service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +30,8 @@ public class OrderLotService {
 	private final OrderRepository orderRepo;
 	@Autowired
 	private final CommonService commonService;
+
+	private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 	public OrderLot add(OrderLot orderLot) {
 		// tạo LotCode
@@ -65,13 +70,19 @@ public class OrderLotService {
 
 	public List<OrderLot> getOrderLotsIncompleted() {
 		try {
-			return lotRepo.findByIsCompleted(false);
+			return lotRepo.findByIsCompleted(false, getToday());
 		} catch (Exception e) {
 			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
-	
+
+	private Date getToday() throws ParseException {
+		String todayStr = dateFormat.format(new Date());
+		Date today = dateFormat.parse(todayStr);
+		return today;
+	}
+
 	public List<OrderLot> getOrderLotsJustRepaired() {
 		try {
 			return lotRepo.findByLotStatus(MConst.PREPARING);
@@ -81,13 +92,14 @@ public class OrderLotService {
 		}
 	}
 
-	public List<OrderLot> getOrdersByLotId() {
-		try {
-			return lotRepo.findByIsCompleted(false);
-		} catch (Exception e) {
-			log.error("Error: {}", e.getMessage());
-			return new ArrayList<>();
-		}
+	public OrderLot deliveryLot(Long id) {
+		OrderLot orderLot = lotRepo.getById(id);
+		orderLot.setLotStatus(MConst.DELIVERY);
+		orderLot.getDetails().forEach(val -> {
+			val.setOrderStatus(MConst.DELIVERY);
+		});
+		log.info("Updated Lot: {} with Status: {}", new Object[] { orderLot.getLotCode(), MConst.DELIVERY });
+		return lotRepo.save(orderLot);
 	}
 
 }

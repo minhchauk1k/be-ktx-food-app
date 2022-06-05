@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import springboot.enums.MConst;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Order;
-import springboot.model.OrderDetails;
 import springboot.model.OrderLot;
 import springboot.repository.OrderLotRepository;
 import springboot.repository.OrderRepository;
@@ -42,10 +41,6 @@ public class OrderService {
 		if (order.getOrderCode() == null || order.getOrderCode().isEmpty()) {
 			String createCode = "ODR_" + String.format("%05d", orderRepo.count() + 1);
 			order.setOrderCode(createCode);
-		}
-
-		for (OrderDetails detail : order.getDetails()) {
-			detail.setOrder(order);
 		}
 
 		order.setCreateDate(new Date());
@@ -87,11 +82,7 @@ public class OrderService {
 
 	public List<Order> getOrdersJustPaid() {
 		try {
-			List<String> list = new ArrayList<>();
-			list.add(MConst.PAID);
-			list.add(MConst.WAITFORPAY);
-//			return orderRepo.findByOrderStatusInAndIsCompleted(list, false);
-			return orderRepo.findByCreateDateGreaterThanEqual(getToday());
+			return orderRepo.getJustPaid(getToday());
 		} catch (Exception e) {
 			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
@@ -106,7 +97,7 @@ public class OrderService {
 
 	public List<Order> getOrdersJustRepaired() {
 		try {
-			return orderRepo.findByOrderStatusAndIsCompleted(MConst.PREPARING, false);
+			return orderRepo.getJustRepaired(getToday());
 		} catch (Exception e) {
 			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();
@@ -115,7 +106,7 @@ public class OrderService {
 
 	public List<Order> getOrdersJustDelivered() {
 		try {
-			return orderRepo.findByOrderStatusAndIsCompleted(MConst.DELIVERY, false);
+			return orderRepo.getJustDelivered(getToday());
 		} catch (Exception e) {
 			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();

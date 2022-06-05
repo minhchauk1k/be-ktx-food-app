@@ -60,6 +60,6 @@ public class Order implements Serializable {
 	private boolean isCancel;
 	private boolean isCompleted;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderDetails> details = new ArrayList<>();
 }

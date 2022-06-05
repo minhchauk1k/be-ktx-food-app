@@ -107,4 +107,10 @@ public class OrderController {
 		OrderLot newLot = lotService.add(orderLot);
 		return new ResponseEntity<>(newLot, HttpStatus.CREATED);
 	}
+	
+	@PutMapping("/lot/update/delivery")
+	public ResponseEntity<OrderLot> deliveryLot(@RequestBody Long id) {
+		OrderLot lot = lotService.deliveryLot(id);
+		return new ResponseEntity<>(lot, HttpStatus.OK);
+	}
 }
