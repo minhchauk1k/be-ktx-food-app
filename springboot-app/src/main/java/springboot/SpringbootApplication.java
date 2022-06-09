@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import springboot.enums.MConst;
@@ -18,6 +19,7 @@ import springboot.service.RoleService;
 import springboot.service.SystemParameterService;
 import springboot.service.UserService;
 
+@EnableScheduling
 @SpringBootApplication
 public class SpringbootApplication {
 
@@ -67,7 +69,8 @@ public class SpringbootApplication {
 				paramService.addParameter(new SystemParameter(MConst.SERECT_KEY, "minchu"));
 				paramService.addParameter(new SystemParameter(MConst.OPEN_TIME, "10"));
 				paramService.addParameter(new SystemParameter(MConst.CLOSE_TIME, "20"));
-				paramService.addParameter(new SystemParameter(MConst.LOT_CONTROL, MConst.NO));
+				paramService.addParameter(new SystemParameter(MConst.LOT_CONTROL, MConst.YES));
+				paramService.addParameter(new SystemParameter(MConst.AUTO_INVENTORY, MConst.BOTH));
 			}
 		};
 	}

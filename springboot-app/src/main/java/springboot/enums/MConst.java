@@ -17,6 +17,7 @@ public class MConst {
 	public static final String OPEN_TIME = "OPEN_TIME";
 	public static final String CLOSE_TIME = "CLOSE_TIME";
 	public static final String LOT_CONTROL = "LOT_CONTROL";
+	public static final String AUTO_INVENTORY = "AUTO_INVENTORY";
 
 	// Date & Time
 	public static final int HOUR = 60 * 60 * 1000;
@@ -32,6 +33,7 @@ public class MConst {
 	public static final String PERCENT = "PERCENT";
 	public static final String YES = "YES";
 	public static final String NO = "NO";
+	public static final String BOTH = "BOTH";
 
 	// PayType
 	public static final String MONEY = "MONEY";

@@ -130,7 +130,7 @@ public class ProductService {
 			product.setDiscountNumber(BigDecimal.ZERO);
 		}
 
-		log.info("Updated a Product: {}", entity.getProductCode());
+		log.info("Updated Product: {} by {}", new Object[] { entity.getProductCode(), entity.getUpdateUser() });
 		return productRepo.save(product);
 	}
 
