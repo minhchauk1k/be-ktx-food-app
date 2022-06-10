@@ -113,4 +113,16 @@ public class OrderController {
 		OrderLot lot = lotService.deliveryLot(id);
 		return new ResponseEntity<>(lot, HttpStatus.OK);
 	}
+	
+	@GetMapping("/report/week")
+	public ResponseEntity<List<List<Order>>> getOrdersReportThisWeek() {
+		List<List<Order>> result = orderService.getOrdersReportWeek();
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@GetMapping("/report/last/week")
+	public ResponseEntity<List<List<Order>>> getOrdersReportLastWeek() {
+		List<List<Order>> result = orderService.getOrdersReportLastWeek();
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 }

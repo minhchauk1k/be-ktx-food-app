@@ -37,10 +37,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	@Query("select o from Order o where o.createDate >= :today AND o.isCompleted = false AND (o.orderStatus = 'WAITFORPAY' OR o.orderStatus = 'PAID')")
 	List<Order> getJustPaid(@Param("today") Date today);
-	
+
 	@Query("select o from Order o where o.createDate >= :today AND o.isCompleted = false AND o.orderStatus = 'PREPARING'")
 	List<Order> getJustRepaired(@Param("today") Date today);
-	
+
 	@Query("select o from Order o where o.createDate >= :today AND o.isCompleted = false AND o.orderStatus = 'DELIVERY'")
 	List<Order> getJustDelivered(@Param("today") Date today);
+
+	@Query("select o from Order o where o.isCompleted = :isCompleted AND o.createDate >= :dateFrom AND o.createDate < :dateTo")
+	List<Order> findByIsCompletedAndCreateDateBetween(@Param("isCompleted") boolean isCompleted,
+			@Param("dateFrom") Date dateFrom, @Param("dateTo") Date dateTo);
 }

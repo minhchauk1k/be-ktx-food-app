@@ -218,4 +218,47 @@ public class OrderService {
 		return orderRepo.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Order with id: " + id + "was not found!"));
 	}
+
+	public List<List<Order>> getOrdersReportWeek() {
+		try {
+			List<List<Order>> result = new ArrayList<>();
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getToday(), getFromToday(+1)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-1), getToday()));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-2), getFromToday(-1)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-3), getFromToday(-2)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-4), getFromToday(-3)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-5), getFromToday(-4)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-6), getFromToday(-5)));
+			return result;
+		} catch (Exception e) {
+			log.error("Error: {}", e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+	
+	public List<List<Order>> getOrdersReportLastWeek() {
+		try {
+			List<List<Order>> result = new ArrayList<>();
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-7), getFromToday(-6)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-8), getFromToday(-7)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-9), getFromToday(-8)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-10), getFromToday(-9)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-11), getFromToday(-10)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-12), getFromToday(-11)));
+			result.add(orderRepo.findByIsCompletedAndCreateDateBetween(true, getFromToday(-13), getFromToday(-12)));
+			return result;
+		} catch (Exception e) {
+			log.error("Error: {}", e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+
+	private Date getFromToday(int value) throws ParseException {
+		String todayStr = dateFormat.format(new Date());
+		Date today = dateFormat.parse(todayStr);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(today);
+		cal.add(Calendar.DAY_OF_MONTH, value);
+		return cal.getTime();
+	}
 }
