@@ -40,9 +40,14 @@ public class SystemParameterService {
 		return paramRepo.findByParameterKey(key)
 				.orElseThrow(() -> new EntityNotFoundException("Parameter with key: " + key + " was not found!"));
 	}
-	
+
 	public boolean getIsLotControl() {
 		String value = getByKey(MConst.LOT_CONTROL).getParameterValue();
-		return value.equals(MConst.YES) ? true: false;
+		return value.equals(MConst.YES) ? true : false;
+	}
+
+	public SystemParameter updateParameter(SystemParameter param) {
+		log.info("Updated Parameter: {}", param.getParameterKey());
+		return paramRepo.save(param);
 	}
 }

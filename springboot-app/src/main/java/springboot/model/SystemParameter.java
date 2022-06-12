@@ -29,6 +29,7 @@ public class SystemParameter {
 	private String parameterKey;
 	@Column(nullable = false)
 	private String parameterValue;
+	private String description;
 
 	public SystemParameter(String parameterKey, String parameterValue) {
 		super();

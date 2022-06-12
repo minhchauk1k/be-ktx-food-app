@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,13 +63,13 @@ public class CommonController {
 		List<Address> addresses = addressService.getAddresses();
 		return new ResponseEntity<>(addresses, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("address/all/type={type}")
 	public ResponseEntity<List<Address>> getByType(@PathVariable("type") String type) {
 		List<Address> addresses = addressService.getByType(type);
 		return new ResponseEntity<>(addresses, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("address/add")
 	public ResponseEntity<Address> add(@RequestBody Address address) {
 		Address newAddress = addressService.add(address);
@@ -79,6 +80,12 @@ public class CommonController {
 	public ResponseEntity<SystemParameter> getParameter(@PathVariable("key") String key) {
 		SystemParameter param = paramService.getByKey(key);
 		return new ResponseEntity<>(param, HttpStatus.OK);
+	}
+
+	@PutMapping("/parameter/{key}")
+	public ResponseEntity<SystemParameter> updateParameter(@RequestBody SystemParameter param) {
+		SystemParameter paramUpdated = paramService.updateParameter(param);
+		return new ResponseEntity<>(paramUpdated, HttpStatus.OK);
 	}
 
 	@GetMapping("/parameters")
