@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -47,4 +48,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Query("select o from Order o where o.isCompleted = :isCompleted AND o.createDate >= :dateFrom AND o.createDate < :dateTo")
 	List<Order> findByIsCompletedAndCreateDateBetween(@Param("isCompleted") boolean isCompleted,
 			@Param("dateFrom") Date dateFrom, @Param("dateTo") Date dateTo);
+
+	@Query("select o from Order o where o.payType = :payType AND o.createUser = :createUser AND o.createDate >= :today ORDER BY o.orderCode DESC")
+	List<Order> getNewestOrderMomoByUserName(@Param("payType") String payType, @Param("createUser") String createUser,
+			@Param("today") Date today, Pageable pageable);
 }

@@ -107,22 +107,28 @@ public class OrderController {
 		OrderLot newLot = lotService.add(orderLot);
 		return new ResponseEntity<>(newLot, HttpStatus.CREATED);
 	}
-	
+
 	@PutMapping("/lot/update/delivery")
 	public ResponseEntity<OrderLot> deliveryLot(@RequestBody Long id) {
 		OrderLot lot = lotService.deliveryLot(id);
 		return new ResponseEntity<>(lot, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/report/week")
 	public ResponseEntity<List<List<Order>>> getOrdersReportThisWeek() {
 		List<List<Order>> result = orderService.getOrdersReportWeek();
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/report/last/week")
 	public ResponseEntity<List<List<Order>>> getOrdersReportLastWeek() {
 		List<List<Order>> result = orderService.getOrdersReportLastWeek();
 		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/update/momo")
+	public ResponseEntity<List<Order>> updateMomoStatus() {
+		List<Order> orders = orderService.updateMomoStatus();
+		return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
 }

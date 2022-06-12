@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -235,7 +236,7 @@ public class OrderService {
 			return new ArrayList<>();
 		}
 	}
-	
+
 	public List<List<Order>> getOrdersReportLastWeek() {
 		try {
 			List<List<Order>> result = new ArrayList<>();
@@ -260,5 +261,21 @@ public class OrderService {
 		cal.setTime(today);
 		cal.add(Calendar.DAY_OF_MONTH, value);
 		return cal.getTime();
+	}
+
+	public List<Order> updateMomoStatus() {
+		try {
+			List<Order> entityList = orderRepo.getNewestOrderMomoByUserName(MConst.MOMO, commonService.getCurrentUser(),
+					getToday(), PageRequest.of(0, 1));
+			entityList.get(0).setOrderStatus(MConst.PAID);
+			entityList.get(0).setPaid(true);
+			entityList.get(0).setUpdateDate(new Date());
+			entityList.get(0).setUpdateUser(commonService.getCurrentUser());
+			log.info("Order: {} is {}", new Object[] { entityList.get(0).getOrderCode(), MConst.PAID });
+			return orderRepo.saveAll(entityList);
+		} catch (Exception e) {
+			log.error("Error: {}", e.getMessage());
+			return new ArrayList<>();
+		}
 	}
 }
