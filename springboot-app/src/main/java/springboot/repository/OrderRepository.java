@@ -28,11 +28,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	List<Order> findByCreateDateGreaterThanEqual(Date today);
 
-	@Query("select o from Order o where o.createUser = :user AND o.createDate > :dateFrom AND o.createDate < :dateTo")
+	@Query("select o from Order o where o.createUser = :user AND o.createDate >= :dateFrom AND o.createDate < :dateTo")
 	List<Order> findByCreateUserAndCreateDateBetween(@Param("user") String user, @Param("dateFrom") Date dateFrom,
 			@Param("dateTo") Date dateTo);
 
-	@Query("select o from Order o where o.createUser = :user AND o.orderStatus = :status AND o.createDate > :dateFrom AND o.createDate < :dateTo")
+	@Query("select o from Order o where o.createUser = :user AND o.orderStatus = :status AND o.createDate >= :dateFrom AND o.createDate < :dateTo")
 	List<Order> findByCreateUserAndOrderStatusAndCreateDateBetween(@Param("user") String user,
 			@Param("status") String status, @Param("dateFrom") Date dateFrom, @Param("dateTo") Date dateTo);
 

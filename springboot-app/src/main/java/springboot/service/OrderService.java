@@ -64,17 +64,34 @@ public class OrderService {
 			String user = commonService.getCurrentUser();
 			Date dateFromD = new SimpleDateFormat("dd-MM-yyyy").parse(dateFrom);
 			Date dateToD = new SimpleDateFormat("dd-MM-yyyy").parse(dateTo);
+			List<Order> result = new ArrayList<>();
 
 			// increase 1 day
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(dateToD);
 			calendar.add(Calendar.DATE, 1);
 			dateToD = calendar.getTime();
-
-			if (status.isEmpty()) {
-				return orderRepo.findByCreateUserAndCreateDateBetween(user, dateFromD, dateToD);
+			switch (status) {
+			case MConst.ALL:
+				result = orderRepo.findByCreateUserAndCreateDateBetween(user, dateFromD, dateToD);
+				break;
+			case MConst.NOT_COMPLETED:
+				result.addAll(orderRepo.findByCreateUserAndOrderStatusAndCreateDateBetween(user, MConst.WAITFORPAY,
+						dateFromD, dateToD));
+				result.addAll(orderRepo.findByCreateUserAndOrderStatusAndCreateDateBetween(user, MConst.PAID, dateFromD,
+						dateToD));
+				result.addAll(orderRepo.findByCreateUserAndOrderStatusAndCreateDateBetween(user, MConst.PREPARING,
+						dateFromD, dateToD));
+				result.addAll(orderRepo.findByCreateUserAndOrderStatusAndCreateDateBetween(user, MConst.DELIVERY,
+						dateFromD, dateToD));
+				break;
+			case MConst.COMPLETED:
+				result = orderRepo.findByCreateUserAndOrderStatusAndCreateDateBetween(user, MConst.COMPLETED, dateFromD,
+						dateToD);
+				break;
 			}
-			return orderRepo.findByCreateUserAndOrderStatusAndCreateDateBetween(user, status, dateFromD, dateToD);
+			log.info("Get orders history with Status: {} for {}", new Object[] { status, user });
+			return result;
 		} catch (Exception e) {
 			log.error("Error: {}", e.getMessage());
 			return new ArrayList<>();

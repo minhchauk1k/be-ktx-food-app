@@ -130,6 +130,9 @@ public class ProductService {
 			product.setDiscountNumber(BigDecimal.ZERO);
 		}
 
+		// thêm mới Category nếu chưa tồn tại
+		addCategory(product.getCategory(), product.getCategory(), product.getType());
+
 		log.info("Updated Product: {} by {}", new Object[] { entity.getProductCode(), entity.getUpdateUser() });
 		return productRepo.save(product);
 	}

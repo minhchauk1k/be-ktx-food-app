@@ -46,6 +46,7 @@ public class MConst {
 	public static final String PREPARING = "PREPARING";
 	public static final String DELIVERY = "DELIVERY";
 	public static final String COMPLETED = "COMPLETED";
+	public static final String NOT_COMPLETED = "NOT_COMPLETED";
 	public static final String CANCEL = "CANCEL";
 
 }
