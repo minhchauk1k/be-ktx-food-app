@@ -39,9 +39,10 @@ public class UserController {
 		String fullName = userService.findByUserName(userName).getDisplayName();
 		User user = new User();
 		user.setDisplayName(fullName);
+		user.setUserName(userName);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/find/userName={userName}")
 	public ResponseEntity<User> getUserByUsername(@PathVariable("userName") String userName) {
 		User user = userService.findByUserName(userName);

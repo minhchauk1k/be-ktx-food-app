@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,9 +72,21 @@ public class CommonController {
 	}
 
 	@PostMapping("address/add")
-	public ResponseEntity<Address> add(@RequestBody Address address) {
+	public ResponseEntity<Address> addAddress(@RequestBody Address address) {
 		Address newAddress = addressService.add(address);
 		return new ResponseEntity<>(newAddress, HttpStatus.CREATED);
+	}
+
+	@PutMapping("/address/update")
+	public ResponseEntity<Address> updateAddress(@RequestBody Address address) {
+		Address addressUpdated = addressService.update(address);
+		return new ResponseEntity<>(addressUpdated, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/address/delete/{id}")
+	public ResponseEntity<?> deletetAddress(@PathVariable("id") Long id) {
+		addressService.deleteById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping("/parameter/{key}")
@@ -104,6 +117,24 @@ public class CommonController {
 	public ResponseEntity<List<Category>> getCategorys() {
 		List<Category> categories = categoryService.getCategories();
 		return new ResponseEntity<>(categories, HttpStatus.OK);
+	}
+
+	@PostMapping("/category/add")
+	public ResponseEntity<Category> addCategory(@RequestBody Category category) {
+		Category categoryNew = categoryService.add(category);
+		return new ResponseEntity<>(categoryNew, HttpStatus.OK);
+	}
+
+	@PutMapping("/category/update")
+	public ResponseEntity<Category> updateCategory(@RequestBody Category category) {
+		Category categoryUpdated = categoryService.update(category);
+		return new ResponseEntity<>(categoryUpdated, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/category/delete/{id}")
+	public ResponseEntity<?> deletetCategory(@PathVariable("id") Long id) {
+		categoryService.deleteById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping("/refresh_token")

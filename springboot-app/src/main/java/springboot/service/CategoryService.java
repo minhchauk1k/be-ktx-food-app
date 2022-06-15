@@ -27,6 +27,11 @@ public class CategoryService {
 		return categoryRepo.save(category);
 	}
 
+	public Category update(Category category) {
+		log.info("Updated new Category: {} with Id: {}", new Object[] { category.getCategoryKey(), category.getId() });
+		return categoryRepo.save(category);
+	}
+
 	public List<Category> getCategories() {
 		try {
 			return categoryRepo.findAll();
@@ -57,6 +62,7 @@ public class CategoryService {
 	public void deleteById(Long id) {
 		Category entity = findById(id);
 		if (entity != null) {
+			log.info("Deleted Category: {} with Id: {}", new Object[] { entity.getCategoryKey(), entity.getId() });
 			categoryRepo.deleteById(id);
 		} else {
 			throw new EntityNotFoundException("Category with id: " + id + " was not found!");

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import springboot.exception.EntityNotFoundException;
 import springboot.model.Address;
 import springboot.repository.AddressRepository;
 
@@ -42,6 +43,30 @@ public class AddressService {
 		log.info("Added new Address: {} with Type: {}",
 				new Object[] { address.getArea() + ", " + address.getZone(), address.getType() });
 		return addressRepo.save(address);
+	}
+
+	public Address update(Address address) {
+		log.info("Updated Address with Id: {}", new Object[] { address.getId() });
+		return addressRepo.save(address);
+	}
+
+	public void deleteById(Long id) {
+		Address entity = findById(id);
+		if (entity != null) {
+			log.info("Deleted Address with Id: {}", new Object[] { entity.getId() });
+			addressRepo.deleteById(id);
+		} else {
+			throw new EntityNotFoundException("Address with id: " + id + " was not found!");
+		}
+	}
+
+	public Address findById(Long id) {
+		try {
+			return addressRepo.findById(id)
+					.orElseThrow(() -> new EntityNotFoundException("Address with id: " + id + "was not found!"));
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }
