@@ -126,6 +126,12 @@ public class OrderController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	@GetMapping("/report/today")
+	public ResponseEntity<List<Order>> getOrdersReportToday() {
+		List<Order> result = orderService.getOrdersReportToday();
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
 	@GetMapping("/update/momo")
 	public ResponseEntity<List<Order>> updateMomoStatus() {
 		List<Order> orders = orderService.updateMomoStatus();

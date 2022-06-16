@@ -271,6 +271,15 @@ public class OrderService {
 		}
 	}
 
+	public List<Order> getOrdersReportToday() {
+		try {
+			return orderRepo.findByCreateDateGreaterThanEqual(getToday());
+		} catch (Exception e) {
+			log.error("Error: {}", e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+
 	private Date getFromToday(int value) throws ParseException {
 		String todayStr = dateFormat.format(new Date());
 		Date today = dateFormat.parse(todayStr);
