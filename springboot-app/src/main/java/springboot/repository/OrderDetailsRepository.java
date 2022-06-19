@@ -6,8 +6,5 @@ import springboot.model.OrderDetails;
 
 @Repository
 public interface OrderDetailsRepository extends JpaRepository<OrderDetails, Long> {
-//	public interface BookRepository extends JpaRepository<Book, BookId> {
-//	    List<Book> findByIdName(String name);
-//	    List<Book> findByIdAuthor(String author);
-//	}
+
 }

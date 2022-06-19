@@ -74,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/report/**").hasAnyAuthority(MConst.ROLE_ADMIN,
 				MConst.ROLE_OWNER, MConst.ROLE_MANAGER);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/all/user/**").hasAnyAuthority(MConst.ROLE_ADMIN,
-				MConst.ROLE_OWNER, MConst.ROLE_MANAGER);
+				MConst.ROLE_OWNER, MConst.ROLE_MANAGER, MConst.ROLE_STAFF, MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/order/all/**").hasAnyAuthority(MConst.ROLE_ADMIN,
 				MConst.ROLE_OWNER, MConst.ROLE_MANAGER, MConst.ROLE_STAFF);
 		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/order/update/**").hasAnyAuthority(MConst.ROLE_ADMIN,
@@ -95,7 +95,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/find/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/find/fullname/**")
 				.hasAnyAuthority(MConst.ROLE_USER);
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/current/**").hasAnyAuthority(MConst.ROLE_USER);
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/current/**").hasAnyAuthority(MConst.ROLE_ADMIN,
+				MConst.ROLE_OWNER, MConst.ROLE_MANAGER, MConst.ROLE_STAFF, MConst.ROLE_USER);
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/all/**").hasAnyAuthority(MConst.ROLE_ADMIN,
 				MConst.ROLE_OWNER, MConst.ROLE_MANAGER);
 		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/user/update/**").hasAnyAuthority(MConst.ROLE_ADMIN,

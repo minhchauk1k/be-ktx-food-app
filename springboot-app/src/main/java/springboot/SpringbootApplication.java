@@ -60,6 +60,8 @@ public class SpringbootApplication {
 				user.setPassword("admin123");
 				user.setCreateDate(new Date());
 				user.setCreateUser("admin");
+				user.setDisplayName("Quản trị viên");
+				user.setPhoneNumber("0967065246");
 				userService.add(user);
 				userService.addRoleToUser(user.getUserName(), MConst.ROLE_ADMIN);
 			}
