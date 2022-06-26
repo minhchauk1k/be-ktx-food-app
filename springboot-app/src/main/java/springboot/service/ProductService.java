@@ -14,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import springboot.enums.MConst;
 import springboot.exception.EntityNotFoundException;
 import springboot.model.Category;
+import springboot.model.OrderDetails;
 import springboot.model.Product;
+import springboot.model.SystemParameter;
 import springboot.repository.ProductRepository;
 
 @Service
@@ -28,6 +30,25 @@ public class ProductService {
 	private final CommonService commonService;
 	@Autowired
 	private final CategoryService categoryService;
+	@Autowired
+	private final SystemParameterService paramService;
+
+	public void updateProductQtyByOrder(List<OrderDetails> orderDetails) {
+		SystemParameter autoInventory = paramService.getByKey(MConst.AUTO_INVENTORY);
+		if (!autoInventory.getParameterValue().equals(MConst.NO)) {
+			orderDetails.forEach(val -> {
+				int checkQty = val.getProduct().getQty() - val.getQty();
+
+				val.getProduct().setQty(checkQty);
+
+				if (checkQty <= 0) {
+					val.getProduct().setInventory(false);
+					log.info("{} is out of stock!", val.getProduct().getProductName());
+				}
+				productRepo.save(val.getProduct());
+			});
+		}
+	}
 
 	public Product add(Product product) {
 		// tạo ProductCode
@@ -57,6 +78,9 @@ public class ProductService {
 			product.setDiscountPercent(BigDecimal.ZERO);
 			product.setDiscountNumber(BigDecimal.ZERO);
 		}
+
+		// tạo qty theo plan
+		product.setQty(product.getPlanQty());
 
 		product.setCreateDate(new Date());
 		product.setCreateUser(commonService.getCurrentUser());
@@ -129,6 +153,9 @@ public class ProductService {
 			product.setDiscountPercent(BigDecimal.ZERO);
 			product.setDiscountNumber(BigDecimal.ZERO);
 		}
+
+		// tạo qty theo plan
+		product.setQty(product.getPlanQty());
 
 		// thêm mới Category nếu chưa tồn tại
 		addCategory(product.getCategory(), product.getCategory(), product.getType());

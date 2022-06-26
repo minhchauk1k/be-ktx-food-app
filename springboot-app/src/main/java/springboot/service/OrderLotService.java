@@ -30,6 +30,8 @@ public class OrderLotService {
 	private final OrderRepository orderRepo;
 	@Autowired
 	private final CommonService commonService;
+	@Autowired
+	private final ProductService productService;
 
 	private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -42,6 +44,11 @@ public class OrderLotService {
 
 		orderLot.setLotStatus(MConst.PREPARING);
 		changeOrdersStatus(orderLot.getDetails(), MConst.PREPARING);
+
+		// auto update out of stock
+		orderLot.getDetails().forEach(val -> {
+			productService.updateProductQtyByOrder(val.getDetails());
+		});
 
 		orderLot.setCreateDate(new Date());
 		orderLot.setCreateUser(commonService.getCurrentUser());

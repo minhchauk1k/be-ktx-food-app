@@ -35,6 +35,8 @@ public class OrderService {
 	private final SystemParameterService parameterService;
 	@Autowired
 	private final CommonService commonService;
+	@Autowired
+	private final ProductService productService;
 
 	private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -43,6 +45,9 @@ public class OrderService {
 			String createCode = "ODR_" + String.format("%05d", orderRepo.count() + 1);
 			order.setOrderCode(createCode);
 		}
+
+		// auto update out of stock
+		productService.updateProductQtyByOrder(order.getDetails());
 
 		order.setCreateDate(new Date());
 		order.setCreateUser(commonService.getCurrentUser());

@@ -50,6 +50,7 @@ public class ScheduledService {
 			}
 
 			products.forEach(val -> {
+				val.setQty(val.getPlanQty());
 				val.setInventory(true);
 			});
 			log.info("Updated Inventory for product list by {} = {}",

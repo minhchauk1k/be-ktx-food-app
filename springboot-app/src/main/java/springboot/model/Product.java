@@ -39,6 +39,9 @@ public class Product implements Serializable {
 	private BigDecimal finalPrice;
 	private BigDecimal discountNumber;
 	private BigDecimal discountPercent;
+	private int qty;
+	@Column(nullable = false)
+	private int planQty;
 	private String urlAvatar;
 	private String description;
 	private String category;
